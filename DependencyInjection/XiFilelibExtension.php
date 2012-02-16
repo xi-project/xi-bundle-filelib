@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\Loader;
  * FilelibExtension
  *
  */
-class FilelibExtension extends Extension
+class XiFilelibExtension extends Extension
 {
 
     /**
@@ -207,7 +207,7 @@ class FilelibExtension extends Extension
         
         
         
-        // $definition->setFactoryClass('Xi\\Filelib\\Integration\\Symfony\\FilelibBundle\\FilelibFactory');
+        // $definition->setFactoryClass('Xi\\Filelib\\Integration\\Symfony\\XiFilelibBundle\\FilelibFactory');
         // $definition->setFactoryMethod('create');
         
 
