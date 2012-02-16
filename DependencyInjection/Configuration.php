@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Xi\Filelib\Integration\Symfony\FilelibBundle\DependencyInjection;
+namespace Xi\Bundle\FilelibBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

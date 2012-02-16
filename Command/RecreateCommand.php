@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Xi\Filelib\Integration\Symfony\FilelibBundle\Command;
+namespace Xi\Bundle\FilelibBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;

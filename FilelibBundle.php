@@ -1,6 +1,6 @@
 <?php
 
-namespace Xi\Filelib\Integration\Symfony\FilelibBundle;
+namespace Xi\Bundle\FilelibBundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

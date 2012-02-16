@@ -1,6 +1,6 @@
 <?php
 
-namespace Xi\Filelib\Integration\Symfony\FilelibBundle\Controller;
+namespace Xi\Bundle\FilelibBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;

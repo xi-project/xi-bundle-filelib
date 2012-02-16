@@ -1,6 +1,6 @@
 <?php
 
-namespace Xi\Filelib\Integration\Symfony\FilelibBundle\Entity;
+namespace Xi\Bundle\FilelibBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xi\Filelib\Integration\Symfony\FilelibBundle\Twig\Extension;
+namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
 use Xi\Filelib\FileLibrary;
 use Xi\Filelib\File\FileItem;
