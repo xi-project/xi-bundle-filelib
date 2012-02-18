@@ -197,6 +197,10 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.acl'),
         ));
         
+        $definition->addMethodCall('setFileOperator', array(
+            new Reference('filelib.fileoperator')
+        ));
+        
         foreach ($psx as $p) {
             $definition->addMethodCall('addProfile', array(new Reference($p)));
         }
@@ -206,21 +210,16 @@ class XiFilelibExtension extends Extension
         }
         
         
+        $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
+        $container->setDefinition('filelib.fileoperator', $definition);
+        $definition->addArgument(new Reference('filelib'));
         
-        // $definition->setFactoryClass('Xi\\Filelib\\Integration\\Symfony\\XiFilelibBundle\\FilelibFactory');
-        // $definition->setFactoryMethod('create');
-        
-
-        // $configurator = array($this, 'luuden');
-        
-        // $definition->setConfigurator($configurator);
+        $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
+        $container->setDefinition('filelib.renderer', $definition);
+        $definition->addArgument(new Reference('filelib.fileoperator'));
         
         
-        // $definition = $container->findDefinition('filelib');
         
-               
-        
-
         
     }
 
