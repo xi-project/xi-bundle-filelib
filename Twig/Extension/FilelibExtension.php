@@ -3,6 +3,7 @@
 namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
 use Xi\Filelib\FileLibrary;
+use Xi\Filelib\Renderer\SymfonyRenderer;
 use Xi\Filelib\File\FileItem;
 
 class FilelibExtension extends \Twig_Extension
@@ -13,10 +14,17 @@ class FilelibExtension extends \Twig_Extension
      */
     protected $filelib;
     
+    /**
+     *
+     * @var Renderer
+     */
+    protected $renderer;
     
-    public function __construct(FileLibrary $filelib)
+    
+    public function __construct(FileLibrary $filelib, SymfonyRenderer $renderer)
     {
         $this->filelib = $filelib;
+        $this->renderer = $renderer;
     }
 
     public function getFunctions()
@@ -48,7 +56,7 @@ class FilelibExtension extends \Twig_Extension
             throw new \InvalidArgumentException('Invalid file');
         }        
         
-        return $this->filelib->getFileOperator()->getUrl($file, array('version' => $version));
+        return $this->renderer->getUrl($file, array('version' => $version));
     }
     
     

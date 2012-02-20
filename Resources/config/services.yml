@@ -1,6 +1,6 @@
 services:
     filelib.twig.extension:
         class: Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension
-        arguments: [ @filelib ]
+        arguments: [ @filelib, @filelib.renderer ]
         tags:
             -  { name: twig.extension }
