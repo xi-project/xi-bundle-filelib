@@ -34,9 +34,12 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->scalarNode('cache')
                 ->defaultNull()
-                ->isRequired()
             ->end()
             
+            ->scalarNode('acl')
+                ->defaultNull()
+            ->end()
+                
             ->arrayNode('backend')
                     ->children()
                         

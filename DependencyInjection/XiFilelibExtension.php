@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -159,12 +160,14 @@ class XiFilelibExtension extends Extension
             $plugz[] = "filelib.plugins.{$pluginOptions['identifier']}";
         }
         
-        
-        // Acl mockin' what to actually do HELP?!?!?!
-        
-        $definition = new Definition('Xi\\Filelib\\Acl\\SimpleAcl');
-        $container->setDefinition('filelib.acl', $definition);
-                
+        // If acl resource is defined, use alias. Otherwise define simple acl.
+        if ($config['acl']) {
+            $alias = new Alias('filelib.acl');
+            $container->setAlias($alias, $config['acl']);
+        } else {
+            $definition = new Definition('Xi\\Filelib\\Acl\\SimpleAcl');
+            $container->setDefinition('filelib.acl', $definition);
+        }
         
         // Main
         
@@ -192,11 +195,12 @@ class XiFilelibExtension extends Extension
         $definition->addMethodCall('setPublisher', array(
             new Reference('filelib.publisher'),
         ));
-
+        
+        
         $definition->addMethodCall('setAcl', array(
             new Reference('filelib.acl'),
         ));
-        
+                
         $definition->addMethodCall('setFileOperator', array(
             new Reference('filelib.fileoperator')
         ));
