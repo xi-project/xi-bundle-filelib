@@ -220,7 +220,7 @@ class XiFilelibExtension extends Extension
         
         $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
         $container->setDefinition('filelib.renderer', $definition);
-        $definition->addArgument(new Reference('filelib.fileoperator'));
+        $definition->addArgument(new Reference('filelib'));
         
         
         
