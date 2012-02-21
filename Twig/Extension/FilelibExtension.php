@@ -36,9 +36,9 @@ class FilelibExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
+            'filelib_file' => new \Twig_Function_Method($this, 'getFile', array('is_safe' => array('html'))),
             'filelib_url' => new \Twig_Function_Method($this, 'getFileUrl', array('is_safe' => array('html'))),
             'filelib_render' => new \Twig_Function_Method($this, 'getRenderUrl', array('is_safe' => array('html'))),
-            'filelib_link' => new \Twig_Function_Method($this, 'getLink', array('is_safe' => array('html'))),
         );
     }
     
@@ -72,7 +72,20 @@ class FilelibExtension extends \Twig_Extension
         return $file;
 
     }
+
     
+    public function getFile($file, $version = 'default')
+    {
+        $file = $this->assertFileIsValid($file);
+        
+        if ($this->filelib->getAcl()->isFileReadableByAnonymous($file)) {
+            return $this->getFileUrl($file, $version);
+        }
+        
+        return $this->getRenderUrl($file, $version);
+        
+    }
+
     
     
     public function getFileUrl($file, $version = 'default')
@@ -87,13 +100,6 @@ class FilelibExtension extends \Twig_Extension
         $file = $this->assertFileIsValid($file);
         $url = $this->router->generate('xi_filelib_render', array('id' => $file->getId(), 'version' => $version));
         return $url;
-    }
-
-    
-    public function getLink($file, $version = 'default')
-    {
-        $file = $this->assertFileIsValid($file);
-        return $file->getLink();
     }
     
 }
