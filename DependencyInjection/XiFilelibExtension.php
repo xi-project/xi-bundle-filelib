@@ -221,9 +221,16 @@ class XiFilelibExtension extends Extension
         $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
         $container->setDefinition('filelib.renderer', $definition);
         $definition->addArgument(new Reference('filelib'));
-        
-        
-        
+        $definition->addMethodCall('enableAcceleration', array($config['renderer']['accelerate']));
+
+        if ($config['renderer']['stripPrefixFromAcceleratedPath']) {
+            $definition->addMethodCall('setStripPrefixFromAcceleratedPath', array($config['renderer']['stripPrefixFromAcceleratedPath']));
+        }
+
+        if ($config['renderer']['addPrefixToAcceleratedPath']) {
+            $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
+        }
+
         
     }
 

@@ -32,8 +32,7 @@ class RendererListener
         
         $request = $event->getRequest();
 
-        
-        
+        $this->renderer->setRequest($request);        
         
     }
     

@@ -28,6 +28,24 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('filelib');
 
         $rootNode->children()
+            
+            ->arrayNode('renderer')
+                ->children()
+                    ->booleanNode('accelerate')
+                        ->defaultFalse()
+                    ->end()
+                
+                    ->scalarNode('stripPrefixFromAcceleratedPath')
+                        ->defaultNull()
+                    ->end()
+
+                    ->scalarNode('addPrefixToAcceleratedPath')
+                        ->defaultNull()
+                    ->end()
+                
+                ->end()
+            ->end()
+                
             ->scalarNode('tempDir')
                 ->defaultNull()
                 ->isRequired()
