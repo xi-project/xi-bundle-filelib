@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             
             ->arrayNode('renderer')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->booleanNode('accelerate')
                         ->defaultFalse()
