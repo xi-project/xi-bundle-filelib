@@ -74,7 +74,7 @@ class FilelibExtension extends \Twig_Extension
     }
 
     
-    public function getFile($file, $version = 'default')
+    public function getFile($file, $version = 'original')
     {
         $file = $this->assertFileIsValid($file);
         
@@ -88,14 +88,14 @@ class FilelibExtension extends \Twig_Extension
 
     
     
-    public function getFileUrl($file, $version = 'default')
+    public function getFileUrl($file, $version = 'original')
     {
         $file = $this->assertFileIsValid($file);
         return $this->renderer->getUrl($file, array('version' => $version));
     }
     
 
-    public function getRenderUrl($file, $version = 'default')
+    public function getRenderUrl($file, $version = 'original')
     {
         $file = $this->assertFileIsValid($file);
         $url = $this->router->generate('xi_filelib_render', array('id' => $file->getId(), 'version' => $version));
