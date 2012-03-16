@@ -35,48 +35,22 @@ class XiFilelibExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        
-        /*
-        set_include_path(get_include_path() . ':' . '/wwwroot/ole-filelib-demo/library');
-        
-        $config = new \Zend_Config_Ini('/wwwroot/ole-filelib-demo/application/configs/application.ini',
-                              'development');
-
-        $lus = $config->resources->filelib->toArray();
-        
-        $dumper = new \Symfony\Component\Yaml\Dumper();
-        
-        echo $dumper->dump($lus, 0, 4);
-        
-                
-        
-        // \Zend_Debug::dump($lus);
-        
-        die();
-        */
-        
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-
-        
-                
-
-        // die();
         
         // Backend
         
-        $backend = new Definition($config['backend']['type'], array($config['backend']['options']));
+        $backend = new Definition($config['backend']['type'], array(new Reference($config['backend']['key'])));
+        
         $container->setDefinition('filelib.backend', $backend);
         
         // @todo: dirty quick kludge to make d-porssi work. How to actually do?!?!?!? Must... investigate... Doctrine f.ex
-        $backend->addMethodCall($config['backend']['method'], array(new Reference($config['backend']['key'])));
-        
-        
+        // $backend->addMethodCall($config['backend']['method'], array(new Reference($config['backend']['key'])));
+                
         if (isset($config['backend']['folderEntity'])) {
-        
            $backend->addMethodCall('setFolderEntityName', array($config['backend']['folderEntity']));
         }
         
@@ -213,7 +187,6 @@ class XiFilelibExtension extends Extension
             $definition->addMethodCall('addPlugin', array(new Reference($plug)));
         }
         
-        
         $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
         $container->setDefinition('filelib.fileoperator', $definition);
         $definition->addArgument(new Reference('filelib'));
@@ -230,7 +203,6 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
-
         
     }
 
