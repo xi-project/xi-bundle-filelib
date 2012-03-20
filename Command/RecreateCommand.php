@@ -56,16 +56,17 @@ class RecreateCommand extends ContainerAwareCommand
             $output->writeln($file->getId());
             
             
-            $po = $file->getProfileObject();
+            $po = $this->filelib->getFileOperator()->getProfile($file->getProfile());
             
             foreach ($po->getPlugins() as $plugin) {
                 
                 // If version plugin
-                if($plugin instanceof \Xi\Filelib\Plugin\VersionProvider\VersionProvider) {
+                if($plugin instanceof \Xi\Filelib\Plugin\VersionProvider\AbstractVersionProvider) {
 
                     // and plugin is valid for the specific file's type
                     if ($plugin->providesFor($file)) {
 
+                                                                        
                         try {
                             $this->filelib->getPublisher()->unpublishVersion($file, $plugin);
                         } catch (\Exception $e) {
@@ -78,9 +79,10 @@ class RecreateCommand extends ContainerAwareCommand
                             $output->writeln($e->getMessage());
                         }
                         
+                        
                         try {
                             $tmp = $plugin->createVersion($file);
-                            $this->filelib->getStorage()->storeVersion($file, $plugin, $tmp);
+                            $this->filelib->getStorage()->storeVersion($file, $plugin->getIdentifier(), $tmp);
 
                         } catch (\Exception $e) {
                             $output->writeln($e->getMessage());
@@ -92,8 +94,7 @@ class RecreateCommand extends ContainerAwareCommand
                         } catch (\Exception $e) {
                             $output->writeln($e->getMessage());
                         }
-
-                        
+                                                
                     }
                 }
                 
@@ -106,23 +107,6 @@ class RecreateCommand extends ContainerAwareCommand
         return true;
         
         
-        $output->writeln(sprintf('Dumping all <comment>%s</comment> assets.', $input->getOption('env')));
-        $output->writeln(sprintf('Debug mode is <comment>%s</comment>.', $input->getOption('no-debug') ? 'off' : 'on'));
-        $output->writeln('');
-
-        if (!$input->getOption('watch')) {
-            foreach ($this->am->getNames() as $name) {
-                $this->dumpAsset($name, $output);
-            }
-
-            return;
-        }
-
-        if (!$this->am->isDebug()) {
-            throw new \RuntimeException('The --watch option is only available in debug mode.');
-        }
-
-        $this->watch($input, $output);
     }
 
 }
