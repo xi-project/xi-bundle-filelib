@@ -1,40 +1,40 @@
 <?php
 
-namespace Xi\Bundle\FilelibBundle\Entity;
+namespace Xi\Filelib\Backend\Doctrine2\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Mapping;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="xi_filelib_folder")
+ * @Entity
+ * @Table(name="xi_filelib_folder")
  */
 class Folder
 {
     /**
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @Column(name="id", type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @ORM\Column(name="foldername", type="string", length=255)
+     * @Column(name="foldername", type="string", length=255)
      */
     protected $name;
     
     /**
-     * @ORM\Column(name="folderurl", type="string", length=5000)
+     * @Column(name="folderurl", type="string", length=5000)
      */
     protected $url;
     
     /**
-     * @ORM\OneToMany(targetEntity="Folder", mappedBy="parent")
+     * @OneToMany(targetEntity="Folder", mappedBy="parent")
      */
     private $children;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Folder", inversedBy="children")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     * @ManyToOne(targetEntity="Folder", inversedBy="children")
+     * @JoinColumn(name="parent_id", referencedColumnName="id")
      */
     private $parent;
     // ...
@@ -57,6 +57,7 @@ class Folder
     public function setName($value)
     {
         $this->name = $value;
+        return $this;
     }
 
     /**
@@ -78,6 +79,7 @@ class Folder
     public function setUrl($value)
     {
         $this->url = $value;
+        return $this;
     }
 
     /**
@@ -99,7 +101,6 @@ class Folder
     public function setParent(Folder $filelibFolder)
     {
         $this->parent = $filelibFolder;
-
         return $this;
     }
 
@@ -111,7 +112,6 @@ class Folder
     public function removeParent()
     {
         $this->parent = null;
-
         return $this;
     }
 
