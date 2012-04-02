@@ -61,7 +61,6 @@ class File
      * @ORM\JoinColumn(name="folder_id", referencedColumnName="id", nullable=false)
      */
     protected $folder;
-   
 
     /**
      * Get id
@@ -233,6 +232,25 @@ class File
         return $this;
     }
     
+    /**
+     * Returns status
+     * 
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
     
+    
+    /**
+     * Sets status
+     * 
+     * @param integer $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
     
 }
