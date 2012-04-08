@@ -3,6 +3,7 @@
 namespace Xi\Bundle\FilelibBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * @ORM\Entity
@@ -12,13 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class File
 {
-    /**
-     * Xi filelib
-     *
-     * @var \Xi_Filelib
-     */
-    private $_filelib;
-
     /**
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -57,11 +51,16 @@ class File
     protected $date_uploaded;
     
     /**
+     *
+     * @ORM\Column(name="status", type="integer", nullable=false)
+     */
+    protected $status;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Folder")
      * @ORM\JoinColumn(name="folder_id", referencedColumnName="id", nullable=false)
      */
     protected $folder;
-   
 
     /**
      * Get id
@@ -75,7 +74,7 @@ class File
      * Set mimetype
      *
      * @param  string             $value
-     * @return XiFilelibFile
+     * @return File
      */
     public function setMimetype($value)
     {
@@ -98,7 +97,7 @@ class File
      * Set profile
      *
      * @param  string             $value
-     * @return XiFilelibFile
+     * @return File
      */
     public function setProfile($value)
     {
@@ -121,7 +120,7 @@ class File
      * Set size
      *
      * @param  integer            $value
-     * @return XiFilelibFile
+     * @return File
      */
     public function setSize($value)
     {
@@ -144,7 +143,7 @@ class File
      * Set name
      *
      * @param  string             $value
-     * @return XiFilelibFile
+     * @return File
      */
     public function setName($value)
     {
@@ -167,7 +166,7 @@ class File
      * Set link
      *
      * @param  string             $value
-     * @return XiFilelibFile
+     * @return File
      */
     public function setLink($value)
     {
@@ -203,28 +202,55 @@ class File
     /**
      * Get emerald filelib folder
      *
-     * @return XiFilelibFolder
+     * @return Folder
      */
     public function getFolder()
     {
         return $this->folder;
     }
 
-    
-    
-    
-    
+    /**
+     * Returns date uploaded
+     * 
+     * @return DateTime
+     */
     public function getDateUploaded()
     {
         return $this->date_uploaded;
     }
     
     
-    public function setDateUploaded(\DateTime $dateUploaded)
+    /**
+     * Sets date uploaded
+     * 
+     * @param DateTime $dateUploaded
+     * @return File 
+     */
+    public function setDateUploaded(DateTime $dateUploaded)
     {
         $this->date_uploaded = $dateUploaded;
+        return $this;
+    }
+    
+    /**
+     * Returns status
+     * 
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
     
     
+    /**
+     * Sets status
+     * 
+     * @param integer $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
     
 }
