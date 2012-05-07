@@ -186,6 +186,16 @@ class XiFilelibExtension extends Extension
         foreach ($plugz as $plug) {
             $definition->addMethodCall('addPlugin', array(new Reference($plug)));
         }
+
+        
+        if ($config['queue']) {
+            $queueDefinition = new Definition($config['queue']['type'], $config['queue']['arguments']);
+            $container->setDefinition('filelib.queue', $queueDefinition);
+            
+            $definition->addMethodCall('setQueue', array(new Reference('filelib.queue')));
+        }
+
+        
         
         $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
         $container->setDefinition('filelib.fileoperator', $definition);
@@ -203,6 +213,7 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
+        
         
     }
 

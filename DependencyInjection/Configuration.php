@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
+               
                 
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('filelib');
@@ -57,6 +58,33 @@ class Configuration implements ConfigurationInterface
             
             ->scalarNode('acl')
                 ->defaultNull()
+            ->end()
+                
+            ->arrayNode('queue')
+                ->defaultValue(array())
+                ->children()
+                
+                    ->scalarNode('type')
+                    ->end()
+                
+                    ->arrayNode('arguments')
+                        ->prototype('scalar')
+                        ->end()
+                    ->end()
+                
+                    ->arrayNode('methods')
+                        ->useAttributeAsKey('id')
+                        ->children()
+                            ->scalarNode('name')
+                            ->end()
+                
+                            ->arrayNode('arguments')
+                            ->end()
+                        ->end()
+                    ->end()
+                    
+                
+                ->end()
             ->end()
                 
             ->arrayNode('backend')
