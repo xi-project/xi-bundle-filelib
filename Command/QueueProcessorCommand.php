@@ -73,12 +73,9 @@ class QueueProcessorCommand extends ContainerAwareCommand
         
         do {
         
-            $message = $queue->dequeue();
+            $obj = $queue->dequeue();
 
-            if ($message) {
-                var_dump($message);
-
-                $obj = unserialize($message['body']);
+            if ($obj) {
 
                 if ($obj instanceof FileCommand) {
 
