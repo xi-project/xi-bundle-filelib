@@ -40,31 +40,31 @@ class XiFilelibExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-        
+
         // Backend
-        
+
         $backend = new Definition($config['backend']['type'], array(new Reference($config['backend']['key'])));
-        
+
         $container->setDefinition('filelib.backend', $backend);
-        
+
         // @todo: dirty quick kludge to make d-porssi work. How to actually do?!?!?!? Must... investigate... Doctrine f.ex
         // $backend->addMethodCall($config['backend']['method'], array(new Reference($config['backend']['key'])));
-                
+
         if (isset($config['backend']['folderEntity'])) {
            $backend->addMethodCall('setFolderEntityName', array($config['backend']['folderEntity']));
         }
-        
+
         if (isset($config['backend']['fileEntity'])) {
             $backend->addMethodCall('setFileEntityName', array($config['backend']['fileEntity']));
         }
-                
-        
+
+
         // Storage
-        
+
         // Dir id calc
         $definition = new Definition($config['storage_filesystem']['directoryIdCalculator']['type'], array($config['storage_filesystem']['directoryIdCalculator']['options']));
         $container->setDefinition('filelib.storage.directoryIdCalculator', $definition);
-        
+
         // Storage
         $definition = new Definition('Xi\\Filelib\\Storage\\FilesystemStorage', array(array(
             'directoryPermission' => $config['storage_filesystem']['directoryPermission'],
@@ -75,57 +75,57 @@ class XiFilelibExtension extends Extension
         $definition->addMethodCall('setDirectoryIdCalculator', array(
             new Reference('filelib.storage.directoryIdCalculator'),
         ));
-                
-        
+
+
         // Publisher
-        
+
         $definition = new Definition($config['publisher']['type'], array($config['publisher']['options']));
         $container->setDefinition('filelib.publisher', $definition);
-        
+
         // Profiles
 
-        
+
         $pc = $config['profiles'];
-                       
-        
+
+
         $psx = array();
-                
+
         foreach ($pc as $p) {
-            
+
             $definition = new Definition($p['linker']['type'], array(
                 $p['linker']['options'],
             ));
             $container->setDefinition("filelib.profiles.{$p['identifier']}.linker", $definition);
-            
+
             $definition = new Definition('Xi\\Filelib\\File\\FileProfile', array(
                 array(
                     'identifier' => $p['identifier'],
                     'description' => $p['description'],
                 ),
             ));
-            
+
             $definition->addMethodCall('setLinker', array(
                 new Reference("filelib.profiles.{$p['identifier']}.linker")
             ));
-            
+
             $container->setDefinition("filelib.profiles.{$p['identifier']}", $definition);
-            
+
             $psx[] = "filelib.profiles.{$p['identifier']}";
-            
+
         }
-        
-        
+
+
         // Plugins
-        
+
         $plugz = array();
-        
+
         foreach ($config['plugins'] as $pluginOptions)
         {
-                                    
+
             if (!isset($pluginOptions['profiles'])) {
                 $pluginOptions['profiles'] = array_keys($this->configuration->getProfiles());
             }
-            
+
             $definition = new Definition($pluginOptions['type'], array(
                 $pluginOptions,
             ));
@@ -133,7 +133,7 @@ class XiFilelibExtension extends Extension
 
             $plugz[] = "filelib.plugins.{$pluginOptions['identifier']}";
         }
-        
+
         // If acl resource is defined, use alias. Otherwise define simple acl.
         if ($config['acl']) {
             $alias = new Alias('filelib.acl');
@@ -142,12 +142,12 @@ class XiFilelibExtension extends Extension
             $definition = new Definition('Xi\\Filelib\\Acl\\SimpleAcl');
             $container->setDefinition('filelib.acl', $definition);
         }
-        
+
         // Main
-        
+
         $definition = new Definition('Xi\\Filelib\\FileLibrary');
         $container->setDefinition('filelib', $definition);
-        
+
         $definition->addMethodCall('setTempDir', array(
             $config['tempDir']
         ));
@@ -161,46 +161,44 @@ class XiFilelibExtension extends Extension
         $definition->addMethodCall('setStorage', array(
             new Reference('filelib.storage'),
         ));
-        
+
         $definition->addMethodCall('setPublisher', array(
             new Reference('filelib.publisher'),
         ));
-        
+
         $definition->addMethodCall('setPublisher', array(
             new Reference('filelib.publisher'),
         ));
-        
-        
+
+
         $definition->addMethodCall('setAcl', array(
             new Reference('filelib.acl'),
         ));
-                
+
         $definition->addMethodCall('setFileOperator', array(
             new Reference('filelib.fileoperator')
         ));
-        
+
         foreach ($psx as $p) {
             $definition->addMethodCall('addProfile', array(new Reference($p)));
         }
-        
+
         foreach ($plugz as $plug) {
             $definition->addMethodCall('addPlugin', array(new Reference($plug)));
         }
 
-        
-        if ($config['queue']) {
+
+        if (isset($config['queue']) && $config['queue']) {
             $queueDefinition = new Definition($config['queue']['type'], $config['queue']['arguments']);
             $container->setDefinition('filelib.queue', $queueDefinition);
-            
+
             $definition->addMethodCall('setQueue', array(new Reference('filelib.queue')));
         }
 
-        
-        
         $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
         $container->setDefinition('filelib.fileoperator', $definition);
         $definition->addArgument(new Reference('filelib'));
-        
+
         $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
         $container->setDefinition('filelib.renderer', $definition);
         $definition->addArgument(new Reference('filelib'));
@@ -213,8 +211,8 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
-        
-        
+
+
     }
 
 }
