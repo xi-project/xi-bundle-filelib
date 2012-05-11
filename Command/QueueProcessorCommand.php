@@ -19,7 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Xi\Filelib\File\Command\FileCommand;
+use Xi\Filelib\Queue\Processor\DefaultQueueProcessor;
 use ReflectionObject;
 
 /**
@@ -30,23 +30,12 @@ use ReflectionObject;
 class QueueProcessorCommand extends ContainerAwareCommand
 {
 
-    /**
-     *
-     * @var Xi\Filelib\File\DefaultFileOperator
-     */
-    private $fileOperator;
 
     /**
      *
-     * @var Xi\Filelib\Folder\FolderOperator
+     * @var DefaultQueueProcessor
      */
-    private $folderOperator;
-    
-    /**
-     *
-     * @var Xi\Filelib\FileLibrary
-     */
-    private $filelib;
+    private $processor;
 
     protected function configure()
     {
@@ -59,55 +48,25 @@ class QueueProcessorCommand extends ContainerAwareCommand
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         parent::initialize($input, $output);
-        $this->filelib = $this->getContainer()->get('filelib');
-        
-        $this->fileOperator = $this->filelib->getFileOperator();
-        $this->folderOperator = $this->filelib->getFolderOperator();
-        
+
+        $this->processor = new DefaultQueueProcessor($this->getContainer()->get('filelib'));
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        
-        $queue = $this->fileOperator->getQueue();
-        
+
         do {
-        
-            $obj = $queue->dequeue();
 
-            if ($obj) {
-
-                if ($obj instanceof FileCommand) {
-
-                    $refl = new ReflectionObject($obj);
-                    $prop = $refl->getProperty('fileOperator');
-                    $prop->setAccessible(true);
-
-                    $prop->setValue($obj, $this->fileOperator);
-
-                    $prop->setAccessible(false);
-
-                    $ret = $obj->execute();
-
-                    if ($ret instanceof FileCommand) {
-                        $queue->enqueue($ret);
-                    }
-
-                }
+            $ret = $this->processor->process();
             
-            
-            
-            
-            
-            } else {
-                echo "sleeping...";
+            if (!$ret) {
                 usleep(200000);
+                echo "Sleeping...\n";
             }
-        
+
         } while(true);
-        
-        
-        
+
     }
 
 }
