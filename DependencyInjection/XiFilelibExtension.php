@@ -66,7 +66,7 @@ class XiFilelibExtension extends Extension
         $container->setDefinition('filelib.storage.directoryIdCalculator', $definition);
 
         // Storage
-        $definition = new Definition('Xi\\Filelib\\Storage\\FilesystemStorage', array(array(
+        $definition = new Definition('Xi\Filelib\Storage\FilesystemStorage', array(array(
             'directoryPermission' => $config['storage_filesystem']['directoryPermission'],
             'filePermission' => $config['storage_filesystem']['filePermission'],
             'root' => $config['storage_filesystem']['root'],
@@ -87,9 +87,6 @@ class XiFilelibExtension extends Extension
 
         $pc = $config['profiles'];
 
-
-        $psx = array();
-
         foreach ($pc as $p) {
 
             $definition = new Definition($p['linker']['type'], array(
@@ -97,7 +94,7 @@ class XiFilelibExtension extends Extension
             ));
             $container->setDefinition("filelib.profiles.{$p['identifier']}.linker", $definition);
 
-            $definition = new Definition('Xi\\Filelib\\File\\FileProfile', array(
+            $definition = new Definition('Xi\Filelib\File\FileProfile', array(
                 array(
                     'identifier' => $p['identifier'],
                     'description' => $p['description'],
@@ -107,21 +104,13 @@ class XiFilelibExtension extends Extension
             $definition->addMethodCall('setLinker', array(
                 new Reference("filelib.profiles.{$p['identifier']}.linker")
             ));
+            $definition->addTag('filelib.profile');
 
             $container->setDefinition("filelib.profiles.{$p['identifier']}", $definition);
-
-            $psx[] = "filelib.profiles.{$p['identifier']}";
-
         }
-
-
-        // Plugins
-
-        $plugz = array();
 
         foreach ($config['plugins'] as $pluginOptions)
         {
-
             if (!isset($pluginOptions['profiles'])) {
                 $pluginOptions['profiles'] = array_keys($this->configuration->getProfiles());
             }
@@ -129,9 +118,8 @@ class XiFilelibExtension extends Extension
             $definition = new Definition($pluginOptions['type'], array(
                 $pluginOptions,
             ));
+            $definition->addTag('filelib.plugin');
             $container->setDefinition("filelib.plugins.{$pluginOptions['identifier']}", $definition);
-
-            $plugz[] = "filelib.plugins.{$pluginOptions['identifier']}";
         }
 
         // If acl resource is defined, use alias. Otherwise define simple acl.
@@ -139,14 +127,21 @@ class XiFilelibExtension extends Extension
             $alias = new Alias('filelib.acl');
             $container->setAlias($alias, $config['acl']);
         } else {
-            $definition = new Definition('Xi\\Filelib\\Acl\\SimpleAcl');
+            $definition = new Definition('Xi\Filelib\Acl\SimpleAcl');
             $container->setDefinition('filelib.acl', $definition);
         }
 
+        $eventDispatcher = new Definition('Symfony\Component\EventDispatcher\EventDispatcher');
+        $container->setDefinition('filelib.eventDispatcher', $eventDispatcher);
+
         // Main
 
-        $definition = new Definition('Xi\\Filelib\\FileLibrary');
+        $definition = new Definition('Xi\Filelib\FileLibrary');
         $container->setDefinition('filelib', $definition);
+
+        $definition->addMethodCall('setEventDispatcher', array(
+            new Reference('filelib.eventdispatcher')
+        ));
 
         $definition->addMethodCall('setTempDir', array(
             $config['tempDir']
@@ -179,21 +174,13 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.fileoperator')
         ));
 
-        foreach ($psx as $p) {
-            $definition->addMethodCall('addProfile', array(new Reference($p)));
-        }
-
-        foreach ($plugz as $plug) {
-            $definition->addMethodCall('addPlugin', array(new Reference($plug)));
-        }
-
-
         if (isset($config['queue']) && $config['queue']) {
             $queueDefinition = new Definition($config['queue']['type'], $config['queue']['arguments']);
             $container->setDefinition('filelib.queue', $queueDefinition);
-
             $definition->addMethodCall('setQueue', array(new Reference('filelib.queue')));
         }
+
+        $definition->addMethodCall('dispatchInitEvent');
 
         $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
         $container->setDefinition('filelib.fileoperator', $definition);
