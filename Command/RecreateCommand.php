@@ -41,18 +41,18 @@ class RecreateCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        
-        $files = $this->filelib->file()->findAll();
 
-        
+        $files = $this->filelib->getFileOperator()->findAll();
+
+
         foreach ($files as $file) {
-            
+
             $po = $this->filelib->getFileOperator()->getProfile($file->getProfile());
-            
+
             $event = new FileEvent($file);
-                                    
+
             foreach ($po->getPlugins() as $plugin) {
-                
+
                 // If version plugin
                 if($plugin instanceof \Xi\Filelib\Plugin\VersionProvider\AbstractVersionProvider) {
 
@@ -62,7 +62,7 @@ class RecreateCommand extends ContainerAwareCommand
                     } catch (\Exception $e) {
                         $output->writeln($e->getMessage());
                     }
-                    
+
                     try {
                         $plugin->afterUpload($event);
                         $output->writeln("Recreated version '{$plugin->getIdentifier()}' of file #{$file->getId()}");
@@ -70,16 +70,16 @@ class RecreateCommand extends ContainerAwareCommand
                         $output->writeln($e->getMessage());
                     }
                 }
-                
+
             }
 
-            
+
         }
-        
-        
+
+
         return 0;
-        
-        
+
+
     }
 
 }

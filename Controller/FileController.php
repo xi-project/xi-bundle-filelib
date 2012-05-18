@@ -7,13 +7,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends Controller
 {
-        
+
     public function renderAction($id, $version = 'original', $download = false)
     {
         $fl = $this->get('filelib');
         $renderer = $this->get('filelib.renderer');
-        
-        $file = $fl->file()->find($id);
+
+        $file = $fl->getFileOperator()->find($id);
         if (!$file) {
             throw $this->createNotFoundException();
         }
@@ -23,6 +23,6 @@ class FileController extends Controller
             'download' => $download,
         ));
     }
-    
+
 }
 
