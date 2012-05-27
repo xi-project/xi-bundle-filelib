@@ -79,10 +79,16 @@ class XiFilelibExtension extends Extension
         $pc = $config['profiles'];
 
         foreach ($pc as $p) {
+            if ($p['linker']['type'] === 'Xi\Filelib\Linker\BeautifurlLinker') {
+                $definition = new Definition($p['linker']['type'], array(
+                    new Reference('filelib.folderoperator'),
+                ));
+            } else {
+                $definition = new Definition($p['linker']['type'], array(
+                    $p['linker']['options'],
+                ));
+            }
 
-            $definition = new Definition($p['linker']['type'], array(
-                $p['linker']['options'],
-            ));
             $container->setDefinition("filelib.profiles.{$p['identifier']}.linker", $definition);
 
             $definition = new Definition('Xi\Filelib\File\FileProfile', array(
@@ -163,6 +169,10 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.fileoperator')
         ));
 
+        $definition->addMethodCall('setFolderOperator', array(
+            new Reference('filelib.folderoperator')
+        ));
+
         if (isset($config['queue']) && $config['queue']) {
             $queueDefinition = new Definition($config['queue']['type'], $config['queue']['arguments']);
             $container->setDefinition('filelib.queue', $queueDefinition);
@@ -173,6 +183,11 @@ class XiFilelibExtension extends Extension
 
         $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
         $container->setDefinition('filelib.fileoperator', $definition);
+        $definition->addArgument(new Reference('filelib'));
+
+        // Folder operator
+        $definition = new Definition('Xi\Filelib\Folder\DefaultFolderOperator');
+        $container->setDefinition('filelib.folderoperator', $definition);
         $definition->addArgument(new Reference('filelib'));
 
         $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
