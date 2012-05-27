@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This file is part of the Xi FilelibBundle package.
+ *
+ * For copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Xi\Bundle\FilelibBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -15,13 +22,11 @@ use Xi\Filelib\Renderer\SymfonyRenderer;
 class RendererListener
 {
     private $renderer;
-    
+
     public function __construct(SymfonyRenderer $renderer)
     {
         $this->renderer = $renderer;
     }
-    
-    
 
     public function onKernelRequest(GetResponseEvent $event)
     {
@@ -29,11 +34,9 @@ class RendererListener
         if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
         }
-        
+
         $request = $event->getRequest();
 
-        $this->renderer->setRequest($request);        
-        
+        $this->renderer->setRequest($request);
     }
-    
 }

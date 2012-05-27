@@ -1,18 +1,15 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
+/**
+ * This file is part of the Xi FilelibBundle package.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
+ * For copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 namespace Xi\Bundle\FilelibBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
@@ -26,10 +23,7 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class XiFilelibExtension extends Extension
 {
-
     /**
-     * Loads the Monolog configuration.
-     *
      * @param array            $config    An array of configuration settings
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
@@ -58,7 +52,6 @@ class XiFilelibExtension extends Extension
             $backend->addMethodCall('setFileEntityName', array($config['backend']['fileEntity']));
         }
 
-
         // Storage
 
         // Dir id calc
@@ -76,7 +69,6 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.storage.directoryIdCalculator'),
         ));
 
-
         // Publisher
 
         $definition = new Definition($config['publisher']['type'], array($config['publisher']['options']));
@@ -84,14 +76,19 @@ class XiFilelibExtension extends Extension
 
         // Profiles
 
-
         $pc = $config['profiles'];
 
         foreach ($pc as $p) {
+            if ($p['linker']['type'] === 'Xi\Filelib\Linker\BeautifurlLinker') {
+                $definition = new Definition($p['linker']['type'], array(
+                    new Reference('filelib.folderoperator'),
+                ));
+            } else {
+                $definition = new Definition($p['linker']['type'], array(
+                    $p['linker']['options'],
+                ));
+            }
 
-            $definition = new Definition($p['linker']['type'], array(
-                $p['linker']['options'],
-            ));
             $container->setDefinition("filelib.profiles.{$p['identifier']}.linker", $definition);
 
             $definition = new Definition('Xi\Filelib\File\FileProfile', array(
@@ -109,8 +106,7 @@ class XiFilelibExtension extends Extension
             $container->setDefinition("filelib.profiles.{$p['identifier']}", $definition);
         }
 
-        foreach ($config['plugins'] as $pluginOptions)
-        {
+        foreach ($config['plugins'] as $pluginOptions) {
             if (!isset($pluginOptions['profiles'])) {
                 $pluginOptions['profiles'] = array_keys($this->configuration->getProfiles());
             }
@@ -165,13 +161,16 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.publisher'),
         ));
 
-
         $definition->addMethodCall('setAcl', array(
             new Reference('filelib.acl'),
         ));
 
         $definition->addMethodCall('setFileOperator', array(
             new Reference('filelib.fileoperator')
+        ));
+
+        $definition->addMethodCall('setFolderOperator', array(
+            new Reference('filelib.folderoperator')
         ));
 
         if (isset($config['queue']) && $config['queue']) {
@@ -186,6 +185,11 @@ class XiFilelibExtension extends Extension
         $container->setDefinition('filelib.fileoperator', $definition);
         $definition->addArgument(new Reference('filelib'));
 
+        // Folder operator
+        $definition = new Definition('Xi\Filelib\Folder\DefaultFolderOperator');
+        $container->setDefinition('filelib.folderoperator', $definition);
+        $definition->addArgument(new Reference('filelib'));
+
         $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
         $container->setDefinition('filelib.renderer', $definition);
         $definition->addArgument(new Reference('filelib'));
@@ -198,8 +202,5 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
-
-
     }
-
 }

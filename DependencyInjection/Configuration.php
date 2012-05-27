@@ -1,11 +1,9 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
+/**
+ * This file is part of the Xi FilelibBundle package.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
+ * For copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
@@ -23,20 +21,18 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-               
-                
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('filelib');
 
         $rootNode->children()
-            
+
             ->arrayNode('renderer')
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->booleanNode('accelerate')
                         ->defaultFalse()
                     ->end()
-                
+
                     ->scalarNode('stripPrefixFromAcceleratedPath')
                         ->defaultNull()
                     ->end()
@@ -44,10 +40,10 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('addPrefixToAcceleratedPath')
                         ->defaultNull()
                     ->end()
-                
+
                 ->end()
             ->end()
-                
+
             ->scalarNode('tempDir')
                 ->defaultNull()
                 ->isRequired()
@@ -55,73 +51,71 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('cache')
                 ->defaultNull()
             ->end()
-            
+
             ->scalarNode('acl')
                 ->defaultNull()
             ->end()
-                
+
             ->arrayNode('queue')
                 ->defaultValue(array())
                 ->children()
-                
+
                     ->scalarNode('type')
                     ->end()
-                
+
                     ->arrayNode('arguments')
                         ->prototype('scalar')
                         ->end()
                     ->end()
-                
+
                     ->arrayNode('methods')
                         ->useAttributeAsKey('id')
                         ->children()
                             ->scalarNode('name')
                             ->end()
-                
+
                             ->arrayNode('arguments')
                             ->end()
                         ->end()
                     ->end()
-                    
-                
+
                 ->end()
             ->end()
-                
+
             ->arrayNode('backend')
                     ->children()
-                        
+
                         ->scalarNode('key')
                             ->isRequired()
                         ->end()
-                
+
                         ->scalarNode('method')
                         ->defaultValue('setEntityManager')
                         ->end()
-                
+
                         ->scalarNode('fileEntity')
                         ->end()
 
                         ->scalarNode('folderEntity')
                         ->end()
-                
+
                         ->scalarNode('type')
                             ->isRequired()
                         ->end()
-                                            
-                
+
                         ->arrayNode('options')
                                 ->useAttributeAsKey('id')
                                 ->prototype('scalar')
                             ->end()
                         ->end()
-                
+
                     ->end()
             ->end()
-                
+
             ->arrayNode('storage_filesystem')
-                
+
                 ->children()
-                
+
                     ->scalarNode('directoryPermission')
                         ->isRequired()
                     ->end()
@@ -129,12 +123,11 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('filePermission')
                         ->isRequired()
                     ->end()
-                
+
                     ->scalarNode('root')
                         ->isRequired()
                     ->end()
 
-                                
                     ->arrayNode('directoryIdCalculator')
                         ->children()
                             ->scalarNode('type')
@@ -147,11 +140,11 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
-                
+
             ->arrayNode('publisher')
-                
+
                 ->children()
-                
+
                     ->scalarNode('type')
                     ->end()
 
@@ -159,56 +152,54 @@ class Configuration implements ConfigurationInterface
                         ->useAttributeAsKey('id')
                         ->prototype('scalar')->end()
                     ->end()
-                
+
                 ->end()
-                
+
             ->end()
-                
+
             ->arrayNode('profiles')
-                
+
                 ->prototype('array')
-                
+
                 ->children()
-                
+
                     ->scalarNode('identifier')
                     ->end()
 
-
                     ->scalarNode('description')
                     ->end()
-                
+
                     ->arrayNode('linker')
-                
+
                         ->children()
-                
+
                             ->scalarNode('type')
                             ->end()
-                
+
                             ->scalarNode('accessToOriginal')
                             ->end()
-                
+
                             ->scalarNode('publishOriginal')
                             ->end()
-                
+
                             ->arrayNode('options')
                                 ->useAttributeAsKey('id')
                                 ->prototype('scalar')->end()
                             ->end()
-                
+
                         ->end()
-                
+
                     ->end()
-                
+
                 ->end()
-                
+
                 ->end()
-                
-                
+
             ->end()
-                
+
             ->variableNode('plugins')
             ->end()
-                
+
         ->end();
 
         return $treeBuilder;
