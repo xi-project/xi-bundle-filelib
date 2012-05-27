@@ -18,14 +18,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class PluginPass implements CompilerPassInterface
 {
-
     public function process(ContainerBuilder $container)
     {
         $services = $container->findTaggedServiceIds('filelib.plugin');
         $filelib = $container->getDefinition('filelib');
+
         foreach ($services as $service => $params) {
             $filelib->addMethodCall('addPlugin', array(new Reference($service)));
         }
     }
-
 }

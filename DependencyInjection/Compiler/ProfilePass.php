@@ -18,14 +18,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class ProfilePass implements CompilerPassInterface
 {
-
     public function process(ContainerBuilder $container)
     {
         $services = $container->findTaggedServiceIds('filelib.profile');
         $filelib = $container->getDefinition('filelib');
+
         foreach ($services as $service => $params) {
             $filelib->addMethodCall('addProfile', array(new Reference($service)));
         }
     }
-
 }

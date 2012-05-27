@@ -22,13 +22,11 @@ use Xi\Filelib\Renderer\SymfonyRenderer;
 class RendererListener
 {
     private $renderer;
-    
+
     public function __construct(SymfonyRenderer $renderer)
     {
         $this->renderer = $renderer;
     }
-    
-    
 
     public function onKernelRequest(GetResponseEvent $event)
     {
@@ -36,11 +34,9 @@ class RendererListener
         if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
         }
-        
+
         $request = $event->getRequest();
 
-        $this->renderer->setRequest($request);        
-        
+        $this->renderer->setRequest($request);
     }
-    
 }

@@ -10,7 +10,6 @@
 namespace Xi\Bundle\FilelibBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
@@ -24,10 +23,7 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class XiFilelibExtension extends Extension
 {
-
     /**
-     * Loads the Monolog configuration.
-     *
      * @param array            $config    An array of configuration settings
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
@@ -56,7 +52,6 @@ class XiFilelibExtension extends Extension
             $backend->addMethodCall('setFileEntityName', array($config['backend']['fileEntity']));
         }
 
-
         // Storage
 
         // Dir id calc
@@ -74,14 +69,12 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.storage.directoryIdCalculator'),
         ));
 
-
         // Publisher
 
         $definition = new Definition($config['publisher']['type'], array($config['publisher']['options']));
         $container->setDefinition('filelib.publisher', $definition);
 
         // Profiles
-
 
         $pc = $config['profiles'];
 
@@ -107,8 +100,7 @@ class XiFilelibExtension extends Extension
             $container->setDefinition("filelib.profiles.{$p['identifier']}", $definition);
         }
 
-        foreach ($config['plugins'] as $pluginOptions)
-        {
+        foreach ($config['plugins'] as $pluginOptions) {
             if (!isset($pluginOptions['profiles'])) {
                 $pluginOptions['profiles'] = array_keys($this->configuration->getProfiles());
             }
@@ -163,7 +155,6 @@ class XiFilelibExtension extends Extension
             new Reference('filelib.publisher'),
         ));
 
-
         $definition->addMethodCall('setAcl', array(
             new Reference('filelib.acl'),
         ));
@@ -196,8 +187,5 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
-
-
     }
-
 }

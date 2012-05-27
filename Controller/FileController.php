@@ -10,11 +10,9 @@
 namespace Xi\Bundle\FilelibBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends Controller
 {
-
     public function renderAction($id, $version = 'original', $download = false)
     {
         $fl = $this->get('filelib');
@@ -30,6 +28,4 @@ class FileController extends Controller
             'download' => $download,
         ));
     }
-
 }
-

@@ -10,13 +10,10 @@
 namespace Xi\Bundle\FilelibBundle\Command;
 
 use Xi\Filelib\Event\FileEvent;
-
+use Xi\Filelib\Plugin\VersionProvider\AbstractVersionProvider;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Recreates all versions provided by plugins
@@ -25,9 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RecreateCommand extends ContainerAwareCommand
 {
-
     /**
-     *
      * @var Xi\Filelib\FileLibrary
      */
     private $filelib;
@@ -48,21 +43,16 @@ class RecreateCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $files = $this->filelib->getFileOperator()->findAll();
 
-
         foreach ($files as $file) {
-
             $po = $this->filelib->getFileOperator()->getProfile($file->getProfile());
 
             $event = new FileEvent($file);
 
             foreach ($po->getPlugins() as $plugin) {
-
                 // If version plugin
-                if($plugin instanceof \Xi\Filelib\Plugin\VersionProvider\AbstractVersionProvider) {
-
+                if ($plugin instanceof AbstractVersionProvider) {
                     try {
                         $plugin->onDelete($event);
                         $output->writeln("Deleted version '{$plugin->getIdentifier()}' of file #{$file->getId()}");
@@ -77,16 +67,9 @@ class RecreateCommand extends ContainerAwareCommand
                         $output->writeln($e->getMessage());
                     }
                 }
-
             }
-
-
         }
 
-
         return 0;
-
-
     }
-
 }
