@@ -82,6 +82,7 @@ class XiFilelibExtension extends Extension
             if ($p['linker']['type'] === 'Xi\Filelib\Linker\BeautifurlLinker') {
                 $definition = new Definition($p['linker']['type'], array(
                     new Reference('filelib.folderoperator'),
+                    $p['linker']['options']
                 ));
             } else {
                 $definition = new Definition($p['linker']['type'], array(
