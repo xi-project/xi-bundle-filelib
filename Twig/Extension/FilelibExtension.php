@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This file is part of the Xi FilelibBundle package.
+ *
+ * For copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
 use Xi\Filelib\FileLibrary;
@@ -10,22 +17,20 @@ use Symfony\Component\Routing\RouterInterface;
 class FilelibExtension extends \Twig_Extension
 {
     /**
-     *
      * @var FileLibrary;
      */
     protected $filelib;
-    
+
     /**
-     *
      * @var Renderer
      */
     protected $renderer;
-    
+
     /**
      * @var RouterInterface
      */
     protected $router;
-    
+
     public function __construct(FileLibrary $filelib, SymfonyRenderer $renderer, RouterInterface $router)
     {
         $this->filelib = $filelib;
@@ -41,7 +46,6 @@ class FilelibExtension extends \Twig_Extension
             'filelib_render' => new \Twig_Function_Method($this, 'getRenderUrl', array('is_safe' => array('html'))),
         );
     }
-    
 
     /**
      * Returns the name of the extension.
@@ -52,11 +56,11 @@ class FilelibExtension extends \Twig_Extension
     {
         return 'filelib';
     }
-    
+
     /**
      * Asserts that file is valid
-     * 
-     * @param mixed $file
+     *
+     * @param  mixed $file
      * @return File
      */
     private function assertFileIsValid($file)
@@ -64,42 +68,37 @@ class FilelibExtension extends \Twig_Extension
         if (is_numeric($file)) {
             $file = $this->filelib->getFileOperator()->find($file);
         }
-        
+
         if (!$file instanceof File) {
             throw new \InvalidArgumentException('Invalid file');
         }
-        
-        return $file;
 
+        return $file;
     }
 
-    
     public function getFile($file, $version = 'original')
     {
         $file = $this->assertFileIsValid($file);
-        
+
         if ($this->filelib->getAcl()->isFileReadableByAnonymous($file)) {
             return $this->getFileUrl($file, $version);
         }
-        
+
         return $this->getRenderUrl($file, $version);
-        
     }
 
-    
-    
     public function getFileUrl($file, $version = 'original')
     {
         $file = $this->assertFileIsValid($file);
+
         return $this->renderer->getUrl($file, array('version' => $version));
     }
-    
 
     public function getRenderUrl($file, $version = 'original')
     {
         $file = $this->assertFileIsValid($file);
         $url = $this->router->generate('xi_filelib_render', array('id' => $file->getId(), 'version' => $version));
+
         return $url;
     }
-    
 }
