@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class FileController extends Controller
 {
-    public function renderAction($id, $version = 'original', $download = false)
+    public function renderAction($id, $version = 'original', $download = false, $track = false)
     {
         $fl = $this->get('filelib');
         $renderer = $this->get('filelib.renderer');
@@ -26,6 +26,7 @@ class FileController extends Controller
         return $renderer->render($file, array(
             'version' => $version,
             'download' => $download,
+            'track'    => $track,
         ));
     }
 }
