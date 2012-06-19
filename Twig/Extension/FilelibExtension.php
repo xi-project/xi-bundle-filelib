@@ -31,12 +31,25 @@ class FilelibExtension extends \Twig_Extension
      */
     protected $router;
 
+    protected $defaultOptions = array(
+        'version' => 'original',
+        'download' => false,
+        'track' => false
+    );
+
     public function __construct(FileLibrary $filelib, SymfonyRenderer $renderer, RouterInterface $router)
     {
         $this->filelib = $filelib;
         $this->renderer = $renderer;
         $this->router = $router;
     }
+
+
+    private function mergeOptionsWithDefaultOptions($options)
+    {
+        return array_merge($this->defaultOptions, $options);
+    }
+
 
     public function getFunctions()
     {
@@ -76,29 +89,33 @@ class FilelibExtension extends \Twig_Extension
         return $file;
     }
 
-    public function getFile($file, $version = 'original')
+    public function getFile($file, $version = 'original', $options = array())
     {
         $file = $this->assertFileIsValid($file);
 
         if ($this->filelib->getAcl()->isFileReadableByAnonymous($file)) {
-            return $this->getFileUrl($file, $version);
+            return $this->getFileUrl($file, $version, $options);
         }
 
-        return $this->getRenderUrl($file, $version);
+        return $this->getRenderUrl($file, $version, $options);
     }
 
-    public function getFileUrl($file, $version = 'original')
+    public function getFileUrl($file, $version = 'original', $options = array())
     {
         $file = $this->assertFileIsValid($file);
 
-        return $this->renderer->getUrl($file, array('version' => $version));
+        $options['version'] = $version;
+        $options = $this->mergeOptionsWithDefaultOptions($options);
+        return $this->renderer->getUrl($file, $options);
     }
 
-    public function getRenderUrl($file, $version = 'original')
+    public function getRenderUrl($file, $version = 'original', $options = array())
     {
         $file = $this->assertFileIsValid($file);
-        $url = $this->router->generate('xi_filelib_render', array('id' => $file->getId(), 'version' => $version));
-
+        $options['version'] = $version;
+        $options['id'] = $file->getId();
+        $options = $this->mergeOptionsWithDefaultOptions($options);
+        $url = $this->router->generate('xi_filelib_render', $options);
         return $url;
     }
 }
