@@ -13,6 +13,8 @@ use Xi\Filelib\FileLibrary;
 use Xi\Filelib\Renderer\SymfonyRenderer;
 use Xi\Filelib\File\File;
 use Symfony\Component\Routing\RouterInterface;
+use InvalidArgumentException;
+use Twig_Function_Method;
 
 class FilelibExtension extends \Twig_Extension
 {
@@ -41,9 +43,10 @@ class FilelibExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'filelib_file' => new \Twig_Function_Method($this, 'getFile', array('is_safe' => array('html'))),
-            'filelib_url' => new \Twig_Function_Method($this, 'getFileUrl', array('is_safe' => array('html'))),
-            'filelib_render' => new \Twig_Function_Method($this, 'getRenderUrl', array('is_safe' => array('html'))),
+            'filelib_file' => new Twig_Function_Method($this, 'getFile', array('is_safe' => array('html'))),
+            'filelib_url' => new Twig_Function_Method($this, 'getFileUrl', array('is_safe' => array('html'))),
+            'filelib_render' => new Twig_Function_Method($this, 'getRenderUrl', array('is_safe' => array('html'))),
+            'filelib_is_file_completed' => new Twig_Function_Method($this, 'isFileCompleted'),
         );
     }
 
@@ -55,25 +58,6 @@ class FilelibExtension extends \Twig_Extension
     public function getName()
     {
         return 'filelib';
-    }
-
-    /**
-     * Asserts that file is valid
-     *
-     * @param  mixed $file
-     * @return File
-     */
-    private function assertFileIsValid($file)
-    {
-        if (is_numeric($file)) {
-            $file = $this->filelib->getFileOperator()->find($file);
-        }
-
-        if (!$file instanceof File) {
-            throw new \InvalidArgumentException('Invalid file');
-        }
-
-        return $file;
     }
 
     public function getFile($file, $version = 'original')
@@ -100,5 +84,36 @@ class FilelibExtension extends \Twig_Extension
         $url = $this->router->generate('xi_filelib_render', array('id' => $file->getId(), 'version' => $version));
 
         return $url;
+    }
+
+    /**
+     * @param  integer|string|File $file
+     * @return boolean
+     */
+    public function isFileCompleted($file)
+    {
+        $file = $this->assertFileIsValid($file);
+
+        return $file->getStatus() === File::STATUS_COMPLETED;
+    }
+
+    /**
+     * Asserts that file is valid
+     *
+     * @param  integer|string|File      $file
+     * @return File
+     * @throws InvalidArgumentException
+     */
+    private function assertFileIsValid($file)
+    {
+        if (is_numeric($file)) {
+            $file = $this->filelib->getFileOperator()->find($file);
+        }
+
+        if (!$file instanceof File) {
+            throw new InvalidArgumentException('Invalid file');
+        }
+
+        return $file;
     }
 }
