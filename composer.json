@@ -1,0 +1,32 @@
+{
+    "name": "xi/filelib-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony FilelibBundle",
+    "keywords": ["file management", "file", "image", "video"],
+    "homepage": "http://github.com/xi-project/xi-bundle-filelib",
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "Mikko Forsström",
+            "email": "pekkisx@gmail.com",
+            "homepage": "http://diktaattoriporssi.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Mikko Hirvonen",
+            "email": "mikko.petteri.hirvonen@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "twig/twig": "1.8.3",
+        "xi/filelib": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Xi\\Bundle\\FilelibBundle": ""
+        }
+    },
+    "target-dir": "Xi/Bundle/FilelibBundle"
+}
