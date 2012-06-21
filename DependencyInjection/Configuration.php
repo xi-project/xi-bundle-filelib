@@ -82,6 +82,36 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
 
+            ->arrayNode('transliterator')
+                ->defaultValue(array())
+                ->children()
+
+                    ->scalarNode('type')
+                    ->end()
+
+                    ->arrayNode('arguments')
+                    ->prototype('scalar')
+                    ->end()
+                    ->end()
+
+                ->end()
+            ->end()
+
+            ->arrayNode('slugifier')
+                ->defaultValue(array())
+                ->children()
+
+                    ->scalarNode('type')
+                    ->end()
+
+                    ->arrayNode('arguments')
+                    ->prototype('scalar')
+                    ->end()
+                    ->end()
+
+                ->end()
+            ->end()
+
             ->arrayNode('backend')
                     ->children()
 
