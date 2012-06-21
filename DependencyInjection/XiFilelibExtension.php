@@ -82,6 +82,7 @@ class XiFilelibExtension extends Extension
             if ($p['linker']['type'] === 'Xi\Filelib\Linker\BeautifurlLinker') {
                 $definition = new Definition($p['linker']['type'], array(
                     new Reference('filelib.folderoperator'),
+                    new Reference('filelib.slugifier'),
                     $p['linker']['options']
                 ));
             } else {
@@ -180,6 +181,17 @@ class XiFilelibExtension extends Extension
             $definition->addMethodCall('setQueue', array(new Reference('filelib.queue')));
         }
 
+        if (isset($config['transliterator']) && $config['transliterator']) {
+            $translitDefinition = new Definition($config['transliterator']['type'], $config['transliterator']['arguments']);
+            $container->setDefinition('filelib.transliterator', $translitDefinition);
+        }
+
+        if (isset($config['slugifier']) && $config['slugifier']) {
+            $slugDefinition = new Definition($config['slugifier']['type']);
+            $slugDefinition->addArgument(new Reference('filelib.transliterator'));
+            $container->setDefinition('filelib.slugifier', $slugDefinition);
+        }
+
         $definition->addMethodCall('dispatchInitEvent');
 
         $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
@@ -203,5 +215,7 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
+
+
     }
 }
