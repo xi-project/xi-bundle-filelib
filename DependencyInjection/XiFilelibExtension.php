@@ -37,7 +37,7 @@ class XiFilelibExtension extends Extension
 
         // Backend
 
-        $backend = new Definition($config['backend']['type'], array(new Reference($config['backend']['key'])));
+        $backend = new Definition($config['backend']['type'], array(new Reference('filelib.eventDispatcher'), new Reference($config['backend']['key'])));
 
         $container->setDefinition('filelib.backend', $backend);
 
