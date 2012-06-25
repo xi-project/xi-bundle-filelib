@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Xi\Filelib\Queue\Processor\DefaultQueueProcessor;
 
 /**
- * Recreates all versions provided by plugins
+ * Processes queue
  *
  * @author Pekkis
  */
