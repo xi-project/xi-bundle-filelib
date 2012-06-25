@@ -29,7 +29,7 @@ class QueueProcessorCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('filelib:queue_processor')
+            ->setName('filelib:queue-processor')
             ->setDescription('Processes queue')
         ;
     }
