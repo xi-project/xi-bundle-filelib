@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Xi\Filelib\Queue\Processor\DefaultQueueProcessor;
 
 /**
- * Recreates all versions provided by plugins
+ * Processes queue
  *
  * @author Pekkis
  */
@@ -29,7 +29,7 @@ class QueueProcessorCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('filelib:queue_processor')
+            ->setName('filelib:queue-processor')
             ->setDescription('Processes queue')
         ;
     }
