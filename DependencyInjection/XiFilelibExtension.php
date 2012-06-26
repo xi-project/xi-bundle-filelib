@@ -11,11 +11,11 @@ namespace Xi\Bundle\FilelibBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\Config\FileLocator;
 
 /**
  * FilelibExtension
@@ -97,6 +97,8 @@ class XiFilelibExtension extends Extension
                 array(
                     'identifier' => $p['identifier'],
                     'description' => $p['description'],
+                    'accessToOriginal' => $p['accessToOriginal'],
+                    'publishOriginal' => $p['publishOriginal'],
                 ),
             ));
 
@@ -108,16 +110,8 @@ class XiFilelibExtension extends Extension
             $container->setDefinition("filelib.profiles.{$p['identifier']}", $definition);
         }
 
-        foreach ($config['plugins'] as $pluginOptions) {
-            if (!isset($pluginOptions['profiles'])) {
-                $pluginOptions['profiles'] = array_keys($this->configuration->getProfiles());
-            }
-
-            $definition = new Definition($pluginOptions['type'], array(
-                $pluginOptions,
-            ));
-            $definition->addTag('filelib.plugin');
-            $container->setDefinition("filelib.plugins.{$pluginOptions['identifier']}", $definition);
+        if (isset($config['plugins'])) {
+            $this->loadPlugins($config['plugins'], $container);
         }
 
         // If acl resource is defined, use alias. Otherwise define simple acl.
@@ -215,7 +209,20 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
+    }
 
-
+    /**
+     * @param array            $plugins
+     * @param ContainerBuilder $container
+     */
+    private function loadPlugins(array $plugins, ContainerBuilder $container)
+    {
+        foreach ($plugins as $pluginOptions) {
+            $definition = new Definition($pluginOptions['type'], array(
+                $pluginOptions,
+            ));
+            $definition->addTag('filelib.plugin');
+            $container->setDefinition("filelib.plugins.{$pluginOptions['identifier']}", $definition);
+        }
     }
 }

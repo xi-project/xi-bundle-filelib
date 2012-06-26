@@ -113,39 +113,40 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->arrayNode('backend')
-                    ->children()
+                ->isRequired()
 
-                        ->scalarNode('key')
-                            ->isRequired()
-                        ->end()
-
-                        ->scalarNode('method')
-                        ->defaultValue('setEntityManager')
-                        ->end()
-
-                        ->scalarNode('fileEntity')
-                        ->end()
-
-                        ->scalarNode('folderEntity')
-                        ->end()
-
-                        ->scalarNode('type')
-                            ->isRequired()
-                        ->end()
-
-                        ->arrayNode('options')
-                                ->useAttributeAsKey('id')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-
+                ->children()
+                    ->scalarNode('key')
+                        ->isRequired()
                     ->end()
+
+                    ->scalarNode('method')
+                        ->defaultValue('setEntityManager')
+                    ->end()
+
+                    ->scalarNode('fileEntity')
+                    ->end()
+
+                    ->scalarNode('folderEntity')
+                    ->end()
+
+                    ->scalarNode('type')
+                        ->isRequired()
+                    ->end()
+
+                    ->arrayNode('options')
+                        ->useAttributeAsKey('id')
+
+                        ->prototype('scalar')
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
 
             ->arrayNode('storage_filesystem')
+                ->isRequired()
 
                 ->children()
-
                     ->scalarNode('directoryPermission')
                         ->isRequired()
                     ->end()
@@ -159,12 +160,18 @@ class Configuration implements ConfigurationInterface
                     ->end()
 
                     ->arrayNode('directoryIdCalculator')
+                        ->isRequired()
+
                         ->children()
                             ->scalarNode('type')
+                                ->isRequired()
                             ->end()
+
                             ->arrayNode('options')
                                 ->useAttributeAsKey('id')
-                                ->prototype('scalar')->end()
+
+                                ->prototype('scalar')
+                                ->end()
                             ->end()
                         ->end()
                     ->end()
@@ -172,59 +179,54 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->arrayNode('publisher')
+                ->isRequired()
 
                 ->children()
-
                     ->scalarNode('type')
+                        ->isRequired()
                     ->end()
 
                     ->arrayNode('options')
                         ->useAttributeAsKey('id')
-                        ->prototype('scalar')->end()
+
+                        ->prototype('scalar')
+                        ->end()
                     ->end()
-
                 ->end()
-
             ->end()
 
             ->arrayNode('profiles')
-
                 ->prototype('array')
-
-                ->children()
-
-                    ->scalarNode('identifier')
-                    ->end()
-
-                    ->scalarNode('description')
-                    ->end()
-
-                    ->arrayNode('linker')
-
-                        ->children()
-
-                            ->scalarNode('type')
-                            ->end()
-
-                            ->scalarNode('accessToOriginal')
-                            ->end()
-
-                            ->scalarNode('publishOriginal')
-                            ->end()
-
-                            ->arrayNode('options')
-                                ->useAttributeAsKey('id')
-                                ->prototype('scalar')->end()
-                            ->end()
-
+                    ->children()
+                        ->scalarNode('identifier')
                         ->end()
 
+                        ->scalarNode('description')
+                        ->end()
+
+                        ->scalarNode('accessToOriginal')
+                        ->end()
+
+                        ->scalarNode('publishOriginal')
+                        ->end()
+
+                        ->arrayNode('linker')
+                            ->isRequired()
+
+                            ->children()
+                                ->scalarNode('type')
+                                ->end()
+
+                                ->arrayNode('options')
+                                    ->useAttributeAsKey('id')
+
+                                    ->prototype('scalar')
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
-
                 ->end()
-
-                ->end()
-
             ->end()
 
             ->variableNode('plugins')
