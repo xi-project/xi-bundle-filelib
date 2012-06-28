@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xi\Filelib\Queue\Processor\DefaultQueueProcessor;
+use Xi\Filelib\FilelibException;
 use DateTime;
 
 /**
@@ -34,13 +35,27 @@ class QueueProcessorCommand extends ContainerAwareCommand
     {
         $processor = new DefaultQueueProcessor($this->getContainer()->get('filelib'));
 
-        if ($processor->process()) {
-            $time = new DateTime();
+        $hasMoreMessages = true;
 
-            $output->writeln(sprintf(
-                '%s Processed something',
-                $time->format('Y-m-d H:i:s')
-            ));
-        }
+        do {
+            try {
+                if ($hasMoreMessages = $processor->process()) {
+                    $time = new DateTime();
+
+                    $output->writeln(sprintf(
+                        '%s OK: Processed something',
+                        $time->format('Y-m-d H:i:s')
+                    ));
+                }
+            } catch (FilelibException $e) {
+                $time = new DateTime();
+
+                $output->writeln(sprintf(
+                    '%s FAIL: %s',
+                    $time->format('Y-m-d H:i:s'),
+                    $e->getMessage()
+                ));
+            }
+        } while ($hasMoreMessages);
     }
 }
