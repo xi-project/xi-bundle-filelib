@@ -20,11 +20,11 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "xi/filelib": "dev-master",
-        "symfony/http-kernel": "2.0.14",
-        "symfony/dependency-injection": "2.0.14",
-        "symfony/config": "2.0.14",
-        "symfony/yaml": "2.0.14",
+        "xi/filelib": "2.1.x-dev",
+        "symfony/http-kernel": "=v2.1.0-BETA1",
+        "symfony/dependency-injection": "=v2.1.0-BETA1",
+        "symfony/config": "=v2.1.0-BETA1",
+        "symfony/yaml": "=v2.1.0-BETA1",
         "twig/twig": "1.8.3"
     },
     "autoload": {
