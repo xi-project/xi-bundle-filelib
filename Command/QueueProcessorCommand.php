@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xi\Filelib\Queue\Processor\DefaultQueueProcessor;
+use DateTime;
 
 /**
  * Processes queue
@@ -21,11 +22,6 @@ use Xi\Filelib\Queue\Processor\DefaultQueueProcessor;
  */
 class QueueProcessorCommand extends ContainerAwareCommand
 {
-    /**
-     * @var DefaultQueueProcessor
-     */
-    private $processor;
-
     protected function configure()
     {
         $this
@@ -34,22 +30,17 @@ class QueueProcessorCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        parent::initialize($input, $output);
-
-        $this->processor = new DefaultQueueProcessor($this->getContainer()->get('filelib'));
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        do {
-            $ret = $this->processor->process();
+        $processor = new DefaultQueueProcessor($this->getContainer()->get('filelib'));
 
-            if (!$ret) {
-                usleep(200000);
-                echo "Sleeping...\n";
-            }
-        } while (true);
+        if ($processor->process()) {
+            $time = new DateTime();
+
+            $output->writeln(sprintf(
+                '%s Processed something',
+                $time->format('Y-m-d H:i:s')
+            ));
+        }
     }
 }
