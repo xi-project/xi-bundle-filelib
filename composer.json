@@ -22,10 +22,10 @@
     "require": {
         "php": ">=5.3.0",
         "xi/filelib": "2.1.x-dev",
-        "symfony/http-kernel": "=v2.1.0-BETA4",
-        "symfony/dependency-injection": "=v2.1.0-BETA4",
-        "symfony/config": "=v2.1.0-BETA4",
-        "symfony/yaml": "=v2.1.0-BETA4",
+        "symfony/http-kernel": "=v2.1.0-RC1",
+        "symfony/dependency-injection": "=v2.1.0-RC1",
+        "symfony/config": "=v2.1.0-RC1",
+        "symfony/yaml": "=v2.1.0-RC1",
         "twig/twig": "1.9.1"
     },
     "autoload": {
