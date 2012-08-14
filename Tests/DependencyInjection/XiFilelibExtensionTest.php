@@ -50,6 +50,34 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function changeFormatPlugin()
+    {
+        $definition = $this->container->getDefinition('filelib.plugins.change_format');
+        $arguments = $definition->getArguments();
+
+        $this->assertEquals('filelib.fileoperator', $arguments[0]);
+        $this->assertArrayHasKey('targetExtension', $arguments[1]);
+    }
+
+    /**
+     * @test
+     */
+    public function versionPlugin()
+    {
+        $definition = $this->container->getDefinition('filelib.plugins.version');
+        $arguments = $definition->getArguments();
+
+        $tempDir = $this->container->getParameterBag()->get('kernel.root_dir') . '/data/temp';
+
+        $this->assertEquals('filelib.storage', $arguments[0]);
+        $this->assertEquals('filelib.publisher', $arguments[1]);
+        $this->assertEquals('filelib.fileoperator', $arguments[2]);
+        $this->assertEquals($tempDir, $arguments[3]);
+    }
+
+    /**
      * @return ContainerBuilder
      */
     private function getContainer()

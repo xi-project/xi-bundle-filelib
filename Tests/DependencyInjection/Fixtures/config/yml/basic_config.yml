@@ -19,3 +19,13 @@ xi_filelib:
             publishOriginal: false
             linker:
                 type: Xi\Filelib\Linker\SequentialLinker
+    plugins:
+        change_format:
+            identifier: change_format
+            type: Xi\Filelib\Plugin\Image\ChangeFormatPlugin
+            profiles: [default]
+            targetExtension: jpg
+        version:
+            identifier: version
+            type: Xi\Filelib\Plugin\Image\VersionPlugin
+            profiles: [default]
