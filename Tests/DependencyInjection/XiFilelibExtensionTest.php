@@ -84,6 +84,40 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function mongoBackend()
+    {
+        $this->loadFromFile('mongo_backend');
+        $this->compileContainer();
+
+        $definition = $this->container->getDefinition('filelib.backend');
+        $arguments = $definition->getArguments();
+
+        $mongoDb = $arguments[0];
+        $mongo = $mongoDb->getArgument(0);
+
+        $this->assertEquals('Xi\Filelib\Backend\MongoBackend', $definition->getClass());
+        $this->assertEquals('mongodb://localhost:27017', $mongo->getArgument(0));
+        $this->assertEquals('xi_filelib', $mongoDb->getArgument(1));
+    }
+
+    /**
+     * @test
+     */
+    public function throwsExceptionIfBackendIsNotConfigured()
+    {
+        $this->loadFromFile('no_backend');
+
+        $this->setExpectedException(
+            'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+            'Backend must be configured.'
+        );
+
+        $this->compileContainer();
+    }
+
+    /**
      * @return ContainerBuilder
      */
     private function getContainer()
