@@ -1,9 +1,9 @@
 xi_filelib:
     backend:
-        type: Xi\Filelib\Backend\Doctrine2Backend
-        key: doctrine.orm.default_entity_manager
-        folderEntity: Foo\Folder
-        fileEntity: Foo\File
+        doctrine_orm:
+            entity_manager: doctrine.orm.default_entity_manager
+            folderEntity: Foo\Folder
+            fileEntity: Foo\File
 
     tempDir: %kernel.root_dir%/data/temp
     storage_filesystem:

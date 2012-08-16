@@ -116,28 +116,29 @@ class Configuration implements ConfigurationInterface
                 ->isRequired()
 
                 ->children()
-                    ->scalarNode('key')
-                        ->isRequired()
+                    ->arrayNode('doctrine_orm')
+                        ->children()
+                            ->scalarNode('entity_manager')
+                                ->isRequired()
+                            ->end()
+
+                            ->scalarNode('fileEntity')
+                            ->end()
+
+                            ->scalarNode('folderEntity')
+                            ->end()
+                        ->end()
                     ->end()
 
-                    ->scalarNode('method')
-                        ->defaultValue('setEntityManager')
-                    ->end()
+                    ->arrayNode('mongo')
+                        ->children()
+                            ->scalarNode('connection')
+                                ->isRequired()
+                            ->end()
 
-                    ->scalarNode('fileEntity')
-                    ->end()
-
-                    ->scalarNode('folderEntity')
-                    ->end()
-
-                    ->scalarNode('type')
-                        ->isRequired()
-                    ->end()
-
-                    ->arrayNode('options')
-                        ->useAttributeAsKey('id')
-
-                        ->prototype('scalar')
+                            ->scalarNode('database')
+                                ->isRequired()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
