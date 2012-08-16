@@ -1,0 +1,24 @@
+xi_filelib:
+    backend:
+        type: Xi\Filelib\Backend\Doctrine2Backend
+        key: doctrine.orm.default_entity_manager
+        folderEntity: Foo\Folder
+        fileEntity: Foo\File
+
+    tempDir: %kernel.root_dir%/data/temp
+    storage_filesystem:
+        directoryPermission: '775'
+        filePermission: '644'
+        root: %kernel.root_dir%/data/files
+        directoryIdCalculator:
+            type: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\TimeDirectoryIdCalculator
+    publisher:
+        type: Xi\Filelib\Publisher\Filesystem\SymlinkFilesystemPublisher
+    profiles:
+        default:
+            identifier: default
+            description: 'Default description'
+            accessToOriginal: false
+            publishOriginal: false
+            linker:
+                type: Xi\Filelib\Linker\SequentialLinker
