@@ -45,7 +45,7 @@ class XiFilelibExtension extends Extension
         // $backend->addMethodCall($config['backend']['method'], array(new Reference($config['backend']['key'])));
 
         if (isset($config['backend']['folderEntity'])) {
-           $backend->addMethodCall('setFolderEntityName', array($config['backend']['folderEntity']));
+            $backend->addMethodCall('setFolderEntityName', array($config['backend']['folderEntity']));
         }
 
         if (isset($config['backend']['fileEntity'])) {
