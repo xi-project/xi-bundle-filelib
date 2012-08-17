@@ -1,8 +1,11 @@
 xi_filelib:
-    tempDir: %kernel.root_dir%/data/temp
     backend:
         doctrine_orm:
             entity_manager: doctrine.orm.default_entity_manager
+            folderEntity: Foo\Folder
+            fileEntity: Foo\File
+
+    tempDir: %kernel.root_dir%/data/temp
     storage_filesystem:
         directoryPermission: '775'
         filePermission: '644'
