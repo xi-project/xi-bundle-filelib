@@ -11,11 +11,12 @@ namespace Xi\Bundle\FilelibBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\FileLocator;
 
 /**
  * FilelibExtension
@@ -35,22 +36,7 @@ class XiFilelibExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        // Backend
-
-        $backend = new Definition($config['backend']['type'], array(new Reference('filelib.eventDispatcher'), new Reference($config['backend']['key'])));
-
-        $container->setDefinition('filelib.backend', $backend);
-
-        // @todo: dirty quick kludge to make d-porssi work. How to actually do?!?!?!? Must... investigate... Doctrine f.ex
-        // $backend->addMethodCall($config['backend']['method'], array(new Reference($config['backend']['key'])));
-
-        if (isset($config['backend']['folderEntity'])) {
-           $backend->addMethodCall('setFolderEntityName', array($config['backend']['folderEntity']));
-        }
-
-        if (isset($config['backend']['fileEntity'])) {
-            $backend->addMethodCall('setFileEntityName', array($config['backend']['fileEntity']));
-        }
+        $this->loadBackend($config['backend'], $container);
 
         // Storage
 
@@ -97,6 +83,8 @@ class XiFilelibExtension extends Extension
                 array(
                     'identifier' => $p['identifier'],
                     'description' => $p['description'],
+                    'accessToOriginal' => $p['accessToOriginal'],
+                    'publishOriginal' => $p['publishOriginal'],
                 ),
             ));
 
@@ -108,16 +96,8 @@ class XiFilelibExtension extends Extension
             $container->setDefinition("filelib.profiles.{$p['identifier']}", $definition);
         }
 
-        foreach ($config['plugins'] as $pluginOptions) {
-            if (!isset($pluginOptions['profiles'])) {
-                $pluginOptions['profiles'] = array_keys($this->configuration->getProfiles());
-            }
-
-            $definition = new Definition($pluginOptions['type'], array(
-                $pluginOptions,
-            ));
-            $definition->addTag('filelib.plugin');
-            $container->setDefinition("filelib.plugins.{$pluginOptions['identifier']}", $definition);
+        if (isset($config['plugins'])) {
+            $this->loadPlugins($config['plugins'], $container);
         }
 
         // If acl resource is defined, use alias. Otherwise define simple acl.
@@ -215,7 +195,75 @@ class XiFilelibExtension extends Extension
         if ($config['renderer']['addPrefixToAcceleratedPath']) {
             $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
         }
+    }
 
+    /**
+     * @param  array                         $backend
+     * @param  ContainerBuilder              $container
+     * @throws InvalidConfigurationException
+     */
+    private function loadBackend(array $backend, ContainerBuilder $container)
+    {
+        if (isset($backend['doctrine_orm'])) {
+            $definition = $this->defineDoctrineORMBackend($backend['doctrine_orm']);
+        } else if (isset($backend['mongo'])) {
+            $definition = $this->defineMongoBackend($backend['mongo']);
+        } else {
+            throw new InvalidConfigurationException('Backend must be configured.');
+        }
 
+        $container->setDefinition('filelib.backend', $definition);
+    }
+
+    /**
+     * @param  array      $backend
+     * @return Definition
+     */
+    private function defineDoctrineORMBackend(array $backend)
+    {
+        $definition = new Definition('Xi\Filelib\Backend\Doctrine2Backend', array(
+            new Reference('filelib.eventDispatcher'),
+            new Reference($backend['entity_manager'])
+        ));
+
+        if (isset($backend['folderEntity'])) {
+            $definition->addMethodCall('setFolderEntityName', array($backend['folderEntity']));
+        }
+
+        if (isset($backend['fileEntity'])) {
+            $definition->addMethodCall('setFileEntityName', array($backend['fileEntity']));
+        }
+
+        return $definition;
+    }
+
+    /**
+     * @param  array      $backend
+     * @return Definition
+     */
+    private function defineMongoBackend(array $backend)
+    {
+        $mongo = new Definition('Mongo', array($backend['connection']));
+        $mongoDb = new Definition('MongoDB', array($mongo, $backend['database']));
+
+        return new Definition('Xi\Filelib\Backend\MongoBackend', array(
+            new Reference('filelib.eventDispatcher'),
+            $mongoDb
+        ));
+    }
+
+    /**
+     * @param array            $plugins
+     * @param ContainerBuilder $container
+     */
+    private function loadPlugins(array $plugins, ContainerBuilder $container)
+    {
+        foreach ($plugins as $pluginOptions) {
+            $definition = new Definition($pluginOptions['type'], array(
+                $pluginOptions,
+            ));
+            $definition->addTag('filelib.plugin');
+            $container->setDefinition("filelib.plugins.{$pluginOptions['identifier']}", $definition);
+        }
     }
 }
