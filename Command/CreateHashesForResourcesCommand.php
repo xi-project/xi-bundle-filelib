@@ -14,6 +14,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xi\Filelib\FileLibrary;
 
+use Xi\Filelib\Migration\ResourceRefactorMigration;
+
 /**
  * Calculates hashes for resources
  *
@@ -43,27 +45,14 @@ class CreateHashesForResourcesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $files = $this->filelib->getFileOperator()->findAll();
+        $migration = new ResourceRefactorMigration($this->filelib);
 
-        foreach ($files as $file) {
+        $output->writeln("Starting migration...");
 
-            try {
-                $profile = $this->filelib->getFileOperator()->getProfile($file->getProfile());
-            } catch (\Exception $e) {
-                continue;
-            }
+        $migration->execute();
 
-            $output->writeln("Processing file #{$file->getId()}");
-
-            $resource = $file->getResource();
-            $retrieved = $this->filelib->getStorage()->retrieve($resource);
-            $resource->setHash(sha1_file($retrieved));
-            $resource->setVersions($profile->getFileVersions($file));
-            $this->filelib->getBackend()->updateResource($resource);
-
-        }
-
-        $output->writeln("All files processed");
+        $output->writeln("Migration done!");
 
     }
+
 }
