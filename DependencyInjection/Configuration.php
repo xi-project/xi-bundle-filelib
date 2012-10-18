@@ -16,6 +16,7 @@ class Configuration implements ConfigurationInterface
 {
     /**
      * Generates the configuration tree builder.
+     * @todo : find out why symfony 2.1 fails on some of the following, commented methods
      *
      * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */
@@ -57,7 +58,7 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->arrayNode('queue')
-                ->defaultValue(array())
+                // ->defaultValue(array())
                 ->children()
 
                     ->scalarNode('type')
@@ -69,7 +70,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
 
                     ->arrayNode('methods')
-                        ->useAttributeAsKey('id')
+                        // ->useAttributeAsKey('id')
                         ->children()
                             ->scalarNode('name')
                             ->end()
@@ -83,7 +84,7 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->arrayNode('transliterator')
-                ->defaultValue(array())
+                // ->defaultValue(array())
                 ->children()
 
                     ->scalarNode('type')
@@ -98,7 +99,7 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->arrayNode('slugifier')
-                ->defaultValue(array())
+                // ->defaultValue(array())
                 ->children()
 
                     ->scalarNode('type')
