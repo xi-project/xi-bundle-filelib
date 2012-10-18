@@ -19,7 +19,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "xi/filelib": "dev-file-resource-refactor"
     },
 
     "autoload": {
