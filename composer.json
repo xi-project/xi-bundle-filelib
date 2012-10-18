@@ -19,13 +19,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "xi/filelib": "dev-file-resource-refactor",
-        "symfony/http-kernel": "2.0.14",
-        "symfony/dependency-injection": "2.0.14",
-        "symfony/config": "2.0.14",
-        "symfony/yaml": "2.0.14",
-        "twig/twig": "1.8.3"
+        "php": ">=5.3.3",
     },
     "autoload": {
         "psr-0": {
