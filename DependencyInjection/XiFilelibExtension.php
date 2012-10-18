@@ -222,6 +222,7 @@ class XiFilelibExtension extends Extension
     private function defineDoctrineORMBackend(array $backend)
     {
         $definition = new Definition('Xi\Filelib\Backend\Doctrine2Backend', array(
+            new Reference('filelib.eventDispatcher'),
             new Reference($backend['entity_manager'])
         ));
 
@@ -246,6 +247,7 @@ class XiFilelibExtension extends Extension
         $mongoDb = new Definition('MongoDB', array($mongo, $backend['database']));
 
         return new Definition('Xi\Filelib\Backend\MongoBackend', array(
+            new Reference('filelib.eventDispatcher'),
             $mongoDb
         ));
     }

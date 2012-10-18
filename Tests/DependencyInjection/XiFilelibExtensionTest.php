@@ -59,8 +59,11 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->compileContainer();
 
         $definition = $this->container->getDefinition('filelib.backend');
+        $arguments = $definition->getArguments();
 
         $this->assertEquals('Xi\Filelib\Backend\Doctrine2Backend', $definition->getClass());
+        $this->assertEquals('filelib.eventdispatcher', $arguments[0]);
+        $this->assertEquals('doctrine.orm.default_entity_manager', $arguments[1]);
         $this->assertMethodCall($definition, 'setFolderEntityName', 'Foo\Folder');
         $this->assertMethodCall($definition, 'setFileEntityName', 'Foo\File');
     }
@@ -94,10 +97,11 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $definition = $this->container->getDefinition('filelib.backend');
         $arguments = $definition->getArguments();
 
-        $mongoDb = $arguments[0];
+        $mongoDb = $arguments[1];
         $mongo = $mongoDb->getArgument(0);
 
         $this->assertEquals('Xi\Filelib\Backend\MongoBackend', $definition->getClass());
+        $this->assertEquals('filelib.eventdispatcher', $arguments[0]);
         $this->assertEquals('mongodb://localhost:27017', $mongo->getArgument(0));
         $this->assertEquals('xi_filelib', $mongoDb->getArgument(1));
     }
