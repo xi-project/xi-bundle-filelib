@@ -174,12 +174,12 @@ class XiFilelibExtension extends Extension
 
         $definition->addMethodCall('dispatchInitEvent');
 
-        $definition = new Definition('Xi\Filelib\File\DefaultFileOperator');
+        $definition = new Definition('Xi\Filelib\File\FileOperator');
         $container->setDefinition('filelib.fileoperator', $definition);
         $definition->addArgument(new Reference('filelib'));
 
         // Folder operator
-        $definition = new Definition('Xi\Filelib\Folder\DefaultFolderOperator');
+        $definition = new Definition('Xi\Filelib\Folder\FolderOperator');
         $container->setDefinition('filelib.folderoperator', $definition);
         $definition->addArgument(new Reference('filelib'));
 
