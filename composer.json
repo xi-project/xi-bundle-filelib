@@ -21,7 +21,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "xi/filelib": ">=0.7.0"
+        "xi/filelib": "0.8.*"
     },
 
     "require-dev": {
@@ -37,5 +37,13 @@
             "Xi\\Bundle\\FilelibBundle": ""
         }
     },
-    "target-dir": "Xi/Bundle/FilelibBundle"
+    
+    "target-dir": "Xi/Bundle/FilelibBundle",
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.8.x-dev"
+        }
+    }
+
 }
