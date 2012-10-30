@@ -1,8 +1,10 @@
 xi_filelib:
-    tempDir: %kernel.root_dir%/data/temp
     backend:
-        doctrine_orm:
-            entity_manager: doctrine.orm.default_entity_manager
+        mongo:
+            connection: mongodb://localhost:27017
+            database: xi_filelib
+
+    tempDir: %kernel.root_dir%/data/temp
     storage_filesystem:
         directoryPermission: '775'
         filePermission: '644'
@@ -19,13 +21,3 @@ xi_filelib:
             publishOriginal: false
             linker:
                 type: Xi\Filelib\Linker\SequentialLinker
-    plugins:
-        change_format:
-            identifier: change_format
-            type: Xi\Filelib\Plugin\Image\ChangeFormatPlugin
-            profiles: [default]
-            targetExtension: jpg
-        version:
-            identifier: version
-            type: Xi\Filelib\Plugin\Image\VersionPlugin
-            profiles: [default]
