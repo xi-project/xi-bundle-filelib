@@ -42,7 +42,7 @@
         "symfony/yaml": "2.1.*",
         "twig/twig": "1.9.1",
         "symfony/process": "2.1.*",
-        "zendframework/zendframework": "2.0.0-beta5",
+        "zendframework/zendframework": "2.0.0-beta4",
         "videlalvaro/php-amqplib": ">=dev-master",
         "zencoder/zencoder-php": "2.0.2"
     },
