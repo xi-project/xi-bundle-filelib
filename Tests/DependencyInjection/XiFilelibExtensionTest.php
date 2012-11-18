@@ -156,6 +156,64 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function zencoderPlugin()
+    {
+        $this->loadFromFile('basic_config');
+        $this->compileContainer();
+
+        $definition = $this->container->getDefinition('filelib.plugins.zencoder');
+        $arguments = $definition->getArguments();
+
+        $tempDir = $this->container->getParameterBag()->get('kernel.root_dir') . '/data/temp';
+
+        $this->assertEquals('filelib.storage', $arguments[0]);
+        $this->assertEquals('filelib.publisher', $arguments[1]);
+        $this->assertEquals('filelib.fileoperator', $arguments[2]);
+
+        $zencoderDefinition = $arguments[3];
+
+        $this->assertEquals('Services_Zencoder', $zencoderDefinition->getClass());
+        $this->assertEquals('api key', $zencoderDefinition->getArgument(0));
+
+        $amazonDefinition = $arguments[4];
+
+        $this->assertEquals('ZendService\Amazon\S3\S3', $amazonDefinition->getClass());
+        $this->assertEquals('aws key', $amazonDefinition->getArgument(0));
+        $this->assertEquals('aws secret key', $amazonDefinition->getArgument(1));
+
+        $this->assertEquals($tempDir, $arguments[5]);
+
+        $options = array(
+            'identifier' => 'zencoder',
+            'type' => 'Xi\Filelib\Plugin\Video\ZencoderPlugin',
+            'profiles' => array('default'),
+            'apiKey' => 'api key',
+            'awsKey' => 'aws key',
+            'awsSecretKey' => 'aws secret key',
+            'awsBucket' => 'aws bucket',
+            'outputs' => array(
+                'pygmi' => array(
+                    'extension' => 'mp4',
+                    'output' => array(
+                        'label' => 'pygmi',
+                        'device_profile' => 'v2/mobile/legacy',
+                    ),
+                ),
+                'watussi' => array(
+                    'extension' => 'mp4',
+                    'output' => array(
+                        'label' => 'watussi',
+                        'device_profile' => 'v2/mobile/advanced',
+                    )
+                ),
+            ),
+        );
+        $this->assertEquals($options, $arguments[6]);
+    }
+
+    /**
      * @return ContainerBuilder
      */
     private function getContainer()

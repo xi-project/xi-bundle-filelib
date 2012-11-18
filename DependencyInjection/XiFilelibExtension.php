@@ -281,6 +281,24 @@ class XiFilelibExtension extends Extension
 
                     break;
 
+                case 'Xi\Filelib\Plugin\Video\ZencoderPlugin':
+                    $definition = new Definition($pluginOptions['type'], array(
+                        new Reference('filelib.storage'),
+                        new Reference('filelib.publisher'),
+                        new Reference('filelib.fileoperator'),
+                        new Definition('Services_Zencoder', array(
+                            $pluginOptions['apiKey'],
+                        )),
+                        new Definition('ZendService\Amazon\S3\S3', array(
+                            $pluginOptions['awsKey'],
+                            $pluginOptions['awsSecretKey'],
+                        )),
+                        $config['tempDir'],
+                        $pluginOptions,
+                    ));
+
+                    break;
+
                 default:
                     $definition = new Definition($pluginOptions['type'], array(
                         $pluginOptions,

@@ -29,3 +29,22 @@ xi_filelib:
             identifier: version
             type: Xi\Filelib\Plugin\Image\VersionPlugin
             profiles: [default]
+        zencoder:
+            identifier: zencoder
+            type: Xi\Filelib\Plugin\Video\ZencoderPlugin
+            profiles: [default]
+            apiKey: api key
+            awsKey: aws key
+            awsSecretKey: aws secret key
+            awsBucket: aws bucket
+            outputs:
+                pygmi:
+                    extension: mp4
+                    output:
+                        label: pygmi
+                        device_profile: v2/mobile/legacy
+                watussi:
+                    extension: mp4
+                    output:
+                        label: watussi
+                        device_profile: v2/mobile/advanced
