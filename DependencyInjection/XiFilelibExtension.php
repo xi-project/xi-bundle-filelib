@@ -271,6 +271,7 @@ class XiFilelibExtension extends Extension
                     break;
 
                 case 'Xi\Filelib\Plugin\Image\VersionPlugin':
+                case 'Xi\Filelib\Plugin\Video\FFmpeg\FFmpegPlugin':
                     $definition = new Definition($pluginOptions['type'], array(
                         new Reference('filelib.storage'),
                         new Reference('filelib.publisher'),

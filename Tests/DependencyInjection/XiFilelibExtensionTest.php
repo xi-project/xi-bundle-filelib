@@ -214,6 +214,32 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function ffmpgePlugin()
+    {
+        $this->loadFromFile('basic_config');
+        $this->compileContainer();
+
+        $definition = $this->container->getDefinition('filelib.plugins.ffmpeg');
+        $arguments = $definition->getArguments();
+
+        $tempDir = $this->container->getParameterBag()->get('kernel.root_dir') . '/data/temp';
+
+        $this->assertEquals('filelib.storage', $arguments[0]);
+        $this->assertEquals('filelib.publisher', $arguments[1]);
+        $this->assertEquals('filelib.fileoperator', $arguments[2]);
+        $this->assertEquals($tempDir, $arguments[3]);
+
+        $options = array(
+            'identifier' => 'ffmpeg',
+            'type' => 'Xi\Filelib\Plugin\Video\FFmpeg\FFmpegPlugin',
+            'profiles' => array('default'),
+        );
+        $this->assertEquals($options, $arguments[4]);
+    }
+
+    /**
      * @return ContainerBuilder
      */
     private function getContainer()

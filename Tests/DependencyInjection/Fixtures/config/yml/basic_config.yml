@@ -48,3 +48,7 @@ xi_filelib:
                     output:
                         label: watussi
                         device_profile: v2/mobile/advanced
+        ffmpeg:
+            identifier: ffmpeg
+            type: Xi\Filelib\Plugin\Video\FFmpeg\FFmpegPlugin
+            profiles: [default]
