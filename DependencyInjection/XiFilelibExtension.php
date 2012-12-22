@@ -97,7 +97,7 @@ class XiFilelibExtension extends Extension
         }
 
         if (isset($config['plugins'])) {
-            $this->loadPlugins($config['plugins'], $container);
+            $this->loadPlugins($config['plugins'], $container, $config);
         }
 
         // If acl resource is defined, use alias. Otherwise define simple acl.
@@ -255,13 +255,57 @@ class XiFilelibExtension extends Extension
     /**
      * @param array            $plugins
      * @param ContainerBuilder $container
+     * @param array            $config
      */
-    private function loadPlugins(array $plugins, ContainerBuilder $container)
-    {
+    private function loadPlugins(array $plugins, ContainerBuilder $container,
+        array $config
+    ) {
         foreach ($plugins as $pluginOptions) {
-            $definition = new Definition($pluginOptions['type'], array(
-                $pluginOptions,
-            ));
+            switch ($pluginOptions['type']) {
+                case 'Xi\Filelib\Plugin\Image\ChangeFormatPlugin':
+                    $definition = new Definition($pluginOptions['type'], array(
+                        new Reference('filelib.fileoperator'),
+                        $pluginOptions,
+                    ));
+
+                    break;
+
+                case 'Xi\Filelib\Plugin\Image\VersionPlugin':
+                case 'Xi\Filelib\Plugin\Video\FFmpeg\FFmpegPlugin':
+                    $definition = new Definition($pluginOptions['type'], array(
+                        new Reference('filelib.storage'),
+                        new Reference('filelib.publisher'),
+                        new Reference('filelib.fileoperator'),
+                        $config['tempDir'],
+                        $pluginOptions,
+                    ));
+
+                    break;
+
+                case 'Xi\Filelib\Plugin\Video\ZencoderPlugin':
+                    $definition = new Definition($pluginOptions['type'], array(
+                        new Reference('filelib.storage'),
+                        new Reference('filelib.publisher'),
+                        new Reference('filelib.fileoperator'),
+                        new Definition('Services_Zencoder', array(
+                            $pluginOptions['apiKey'],
+                        )),
+                        new Definition('ZendService\Amazon\S3\S3', array(
+                            $pluginOptions['awsKey'],
+                            $pluginOptions['awsSecretKey'],
+                        )),
+                        $config['tempDir'],
+                        $pluginOptions,
+                    ));
+
+                    break;
+
+                default:
+                    $definition = new Definition($pluginOptions['type'], array(
+                        $pluginOptions,
+                    ));
+            }
+
             $definition->addTag('filelib.plugin');
             $container->setDefinition("filelib.plugins.{$pluginOptions['identifier']}", $definition);
         }
