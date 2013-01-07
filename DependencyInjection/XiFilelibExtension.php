@@ -36,7 +36,8 @@ class XiFilelibExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $this->loadBackend($config['backend'], $container);
+        $this->loadBackend($container);
+        $this->loadPlatform($config['backend']['platform'], $container);
 
         // Storage
 
@@ -109,8 +110,11 @@ class XiFilelibExtension extends Extension
             $container->setDefinition('filelib.acl', $definition);
         }
 
-        $eventDispatcher = new Definition('Symfony\Component\EventDispatcher\EventDispatcher');
-        $container->setDefinition('filelib.eventDispatcher', $eventDispatcher);
+        // $edDefinition = new Definition('Symfony\Component\EventDispatcher\EventDispatcher');
+        // $container->setDefinition('filelib.eventdispatcher', $edDefinition);
+
+        $eddDefinition = new Alias('filelib.eventdispatcher');
+        $container->setAlias($eddDefinition, 'event_dispatcher');
 
         // Main
 
@@ -125,12 +129,15 @@ class XiFilelibExtension extends Extension
             $config['tempDir']
         ));
 
-        // Set backend
+        $definition->addMethodCall('setPlatform', array(
+            new Reference('filelib.backend.platform'),
+        ));
+
         $definition->addMethodCall('setBackend', array(
             new Reference('filelib.backend'),
         ));
 
-        // Set backend
+
         $definition->addMethodCall('setStorage', array(
             new Reference('filelib.storage'),
         ));
@@ -197,57 +204,77 @@ class XiFilelibExtension extends Extension
         }
     }
 
+    private function loadBackend(ContainerBuilder $container)
+    {
+        $imDefinition = new Definition(
+            'Xi\Filelib\IdentityMap\IdentityMap',
+            array(
+                new Reference('filelib.eventDispatcher'),
+            )
+        );
+        $container->setDefinition('filelib.identityMap', $imDefinition);
+
+        $backendDefinition = new Definition(
+            'Xi\Filelib\Backend\Backend',
+            array(
+                new Reference('filelib.eventDispatcher'),
+                new Reference('filelib.backend.platform'),
+                new Reference('filelib.identityMap'),
+            )
+        );
+        $container->setDefinition('filelib.backend', $backendDefinition);
+    }
+
+
     /**
      * @param  array                         $backend
      * @param  ContainerBuilder              $container
      * @throws InvalidConfigurationException
      */
-    private function loadBackend(array $backend, ContainerBuilder $container)
+    private function loadPlatform(array $platform, ContainerBuilder $container)
     {
-        if (isset($backend['doctrine_orm'])) {
-            $definition = $this->defineDoctrineORMBackend($backend['doctrine_orm']);
-        } else if (isset($backend['mongo'])) {
-            $definition = $this->defineMongoBackend($backend['mongo']);
+        if (isset($platform['doctrine_orm'])) {
+            $definition = $this->defineDoctrineORMPlatform($platform['doctrine_orm']);
+        } else if (isset($platform['mongo'])) {
+            $definition = $this->defineMongoPlatform($platform['mongo']);
         } else {
-            throw new InvalidConfigurationException('Backend must be configured.');
+            throw new InvalidConfigurationException('Platform must be configured.');
         }
 
-        $container->setDefinition('filelib.backend', $definition);
+        $container->setDefinition('filelib.backend.platform', $definition);
     }
 
     /**
-     * @param  array      $backend
+     * @param  array $platform
      * @return Definition
      */
-    private function defineDoctrineORMBackend(array $backend)
+    private function defineDoctrineORMPlatform(array $platform)
     {
-        $definition = new Definition('Xi\Filelib\Backend\Doctrine2Backend', array(
-            new Reference('filelib.eventDispatcher'),
-            new Reference($backend['entity_manager'])
+        $definition = new Definition('Xi\Filelib\Backend\Platform\DoctrineOrmPlatform', array(
+            new Reference($platform['entity_manager'])
         ));
 
-        if (isset($backend['folderEntity'])) {
-            $definition->addMethodCall('setFolderEntityName', array($backend['folderEntity']));
+        if (isset($platform['folderEntity'])) {
+            $definition->addMethodCall('setFolderEntityName', array($platform['folderEntity']));
         }
 
-        if (isset($backend['fileEntity'])) {
-            $definition->addMethodCall('setFileEntityName', array($backend['fileEntity']));
+        if (isset($platform['fileEntity'])) {
+            $definition->addMethodCall('setFileEntityName', array($platform['fileEntity']));
         }
 
         return $definition;
     }
 
     /**
-     * @param  array      $backend
+     * @param  array      $platform
      * @return Definition
      */
-    private function defineMongoBackend(array $backend)
+    private function defineMongoPlatform(array $platform)
     {
-        $mongo = new Definition('Mongo', array($backend['connection']));
-        $mongoDb = new Definition('MongoDB', array($mongo, $backend['database']));
+        $mongo = new Definition('Mongo', array($platform['connection']));
+        $mongoDb = new Definition('MongoDB', array($mongo, $platform['database']));
 
-        return new Definition('Xi\Filelib\Backend\MongoBackend', array(
-            new Reference('filelib.eventDispatcher'),
+        return new Definition('Xi\Filelib\Backend\MongoPlatform', array(
             $mongoDb
         ));
     }

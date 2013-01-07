@@ -19,6 +19,10 @@ class FileController extends Controller
         $renderer = $this->get('filelib.renderer');
 
         $file = $fl->getFileOperator()->find($id);
+
+        var_dump($file);
+        die();
+
         if (!$file) {
             throw $this->createNotFoundException();
         }
