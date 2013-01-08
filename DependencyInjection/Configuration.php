@@ -117,28 +117,34 @@ class Configuration implements ConfigurationInterface
                 ->isRequired()
 
                 ->children()
-                    ->arrayNode('doctrine_orm')
+
+                    ->arrayNode('platform')
                         ->children()
-                            ->scalarNode('entity_manager')
-                                ->isRequired()
+
+                            ->arrayNode('doctrine_orm')
+                                ->children()
+                                    ->scalarNode('entity_manager')
+                                        ->isRequired()
+                                    ->end()
+
+                                    ->scalarNode('fileEntity')
+                                    ->end()
+
+                                    ->scalarNode('folderEntity')
+                                    ->end()
+                                ->end()
                             ->end()
 
-                            ->scalarNode('fileEntity')
-                            ->end()
+                            ->arrayNode('mongo')
+                                ->children()
+                                    ->scalarNode('connection')
+                                        ->isRequired()
+                                    ->end()
 
-                            ->scalarNode('folderEntity')
-                            ->end()
-                        ->end()
-                    ->end()
-
-                    ->arrayNode('mongo')
-                        ->children()
-                            ->scalarNode('connection')
-                                ->isRequired()
-                            ->end()
-
-                            ->scalarNode('database')
-                                ->isRequired()
+                                    ->scalarNode('database')
+                                        ->isRequired()
+                                    ->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

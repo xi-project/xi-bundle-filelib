@@ -1,9 +1,9 @@
 xi_filelib:
     backend:
-        mongo:
-            connection: mongodb://localhost:27017
-            database: xi_filelib
-
+        platform:
+            mongo:
+                connection: mongodb://localhost:27017
+                database: xi_filelib
     tempDir: %kernel.root_dir%/data/temp
     storage_filesystem:
         directoryPermission: '775'
