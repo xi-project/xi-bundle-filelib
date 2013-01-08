@@ -20,9 +20,6 @@ class FileController extends Controller
 
         $file = $fl->getFileOperator()->find($id);
 
-        var_dump($file);
-        die();
-
         if (!$file) {
             throw $this->createNotFoundException();
         }

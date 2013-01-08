@@ -37,7 +37,9 @@ class XiFilelibExtension extends Extension
         $loader->load('services.yml');
 
         $this->loadBackend($container);
-        $this->loadPlatform($config['backend']['platform'], $container);
+        $this->loadPlatform(
+            isset($config['backend']['platform']) ? $config['backend']['platform'] : array(), $container
+        );
 
         // Storage
 
@@ -274,7 +276,7 @@ class XiFilelibExtension extends Extension
         $mongo = new Definition('Mongo', array($platform['connection']));
         $mongoDb = new Definition('MongoDB', array($mongo, $platform['database']));
 
-        return new Definition('Xi\Filelib\Backend\MongoPlatform', array(
+        return new Definition('Xi\Filelib\Backend\Platform\MongoPlatform', array(
             $mongoDb
         ));
     }
