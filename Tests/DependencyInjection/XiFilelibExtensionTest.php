@@ -68,17 +68,16 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function doctrine2Backend()
+    public function doctrineOrmBackend()
     {
         $this->loadFromFile('doctrine2_backend');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.backend');
+        $definition = $this->container->getDefinition('filelib.backend.platform');
         $arguments = $definition->getArguments();
 
-        $this->assertEquals('Xi\Filelib\Backend\Doctrine2Backend', $definition->getClass());
-        $this->assertEquals('filelib.eventdispatcher', $arguments[0]);
-        $this->assertEquals('doctrine.orm.default_entity_manager', $arguments[1]);
+        $this->assertEquals('Xi\Filelib\Backend\Platform\DoctrineOrmPlatform', $definition->getClass());
+        $this->assertEquals('doctrine.orm.default_entity_manager', $arguments[0]);
         $this->assertMethodCall($definition, 'setFolderEntityName', 'Foo\Folder');
         $this->assertMethodCall($definition, 'setFileEntityName', 'Foo\File');
     }
@@ -123,19 +122,18 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function mongoBackend()
+    public function mongoPlatform()
     {
         $this->loadFromFile('mongo_backend');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.backend');
+        $definition = $this->container->getDefinition('filelib.backend.platform');
         $arguments = $definition->getArguments();
 
-        $mongoDb = $arguments[1];
+        $mongoDb = $arguments[0];
         $mongo = $mongoDb->getArgument(0);
 
-        $this->assertEquals('Xi\Filelib\Backend\MongoBackend', $definition->getClass());
-        $this->assertEquals('filelib.eventdispatcher', $arguments[0]);
+        $this->assertEquals('Xi\Filelib\Backend\Platform\MongoPlatform', $definition->getClass());
         $this->assertEquals('mongodb://localhost:27017', $mongo->getArgument(0));
         $this->assertEquals('xi_filelib', $mongoDb->getArgument(1));
     }
@@ -149,7 +147,7 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException(
             'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
-            'Backend must be configured.'
+            'Platform must be configured.'
         );
 
         $this->compileContainer();
