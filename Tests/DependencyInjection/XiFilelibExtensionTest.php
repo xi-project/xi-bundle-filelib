@@ -41,7 +41,7 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('basic_config');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.profiles.default');
+        $definition = $this->container->getDefinition('xi_filelib.profiles.default');
         $arguments = $definition->getArguments();
 
         $this->assertEquals('default', $arguments[0]['identifier']);
@@ -58,10 +58,10 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('basic_config');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.plugins.change_format');
+        $definition = $this->container->getDefinition('xi_filelib.plugins.change_format');
         $arguments = $definition->getArguments();
 
-        $this->assertEquals('filelib.fileoperator', $arguments[0]);
+        $this->assertEquals('xi_filelib.fileoperator', $arguments[0]);
         $this->assertArrayHasKey('targetExtension', $arguments[1]);
     }
 
@@ -73,7 +73,7 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('doctrine2_backend');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.backend.platform');
+        $definition = $this->container->getDefinition('xi_filelib.backend.platform');
         $arguments = $definition->getArguments();
 
         $this->assertEquals('Xi\Filelib\Backend\Platform\DoctrineOrmPlatform', $definition->getClass());
@@ -108,14 +108,14 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('basic_config');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.plugins.version');
+        $definition = $this->container->getDefinition('xi_filelib.plugins.version');
         $arguments = $definition->getArguments();
 
         $tempDir = $this->container->getParameterBag()->get('kernel.root_dir') . '/data/temp';
 
-        $this->assertEquals('filelib.storage', $arguments[0]);
-        $this->assertEquals('filelib.publisher', $arguments[1]);
-        $this->assertEquals('filelib.fileoperator', $arguments[2]);
+        $this->assertEquals('xi_filelib.storage', $arguments[0]);
+        $this->assertEquals('xi_filelib.publisher', $arguments[1]);
+        $this->assertEquals('xi_filelib.fileoperator', $arguments[2]);
         $this->assertEquals($tempDir, $arguments[3]);
     }
 
@@ -127,7 +127,7 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('mongo_backend');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.backend.platform');
+        $definition = $this->container->getDefinition('xi_filelib.backend.platform');
         $arguments = $definition->getArguments();
 
         $mongoDb = $arguments[0];
@@ -161,14 +161,14 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('basic_config');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.plugins.zencoder');
+        $definition = $this->container->getDefinition('xi_filelib.plugins.zencoder');
         $arguments = $definition->getArguments();
 
         $tempDir = $this->container->getParameterBag()->get('kernel.root_dir') . '/data/temp';
 
-        $this->assertEquals('filelib.storage', $arguments[0]);
-        $this->assertEquals('filelib.publisher', $arguments[1]);
-        $this->assertEquals('filelib.fileoperator', $arguments[2]);
+        $this->assertEquals('xi_filelib.storage', $arguments[0]);
+        $this->assertEquals('xi_filelib.publisher', $arguments[1]);
+        $this->assertEquals('xi_filelib.fileoperator', $arguments[2]);
 
         $zencoderDefinition = $arguments[3];
 
@@ -219,14 +219,14 @@ class XiFilelibExtensionTest extends \PHPUnit_Framework_TestCase
         $this->loadFromFile('basic_config');
         $this->compileContainer();
 
-        $definition = $this->container->getDefinition('filelib.plugins.ffmpeg');
+        $definition = $this->container->getDefinition('xi_filelib.plugins.ffmpeg');
         $arguments = $definition->getArguments();
 
         $tempDir = $this->container->getParameterBag()->get('kernel.root_dir') . '/data/temp';
 
-        $this->assertEquals('filelib.storage', $arguments[0]);
-        $this->assertEquals('filelib.publisher', $arguments[1]);
-        $this->assertEquals('filelib.fileoperator', $arguments[2]);
+        $this->assertEquals('xi_filelib.storage', $arguments[0]);
+        $this->assertEquals('xi_filelib.publisher', $arguments[1]);
+        $this->assertEquals('xi_filelib.fileoperator', $arguments[2]);
         $this->assertEquals($tempDir, $arguments[3]);
 
         $options = array(

@@ -20,8 +20,8 @@ class ProfilePass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $services = $container->findTaggedServiceIds('filelib.profile');
-        $filelib = $container->getDefinition('filelib');
+        $services = $container->findTaggedServiceIds('xi_filelib.profile');
+        $filelib = $container->getDefinition('xi_filelib');
 
         foreach ($services as $service => $params) {
             $filelib->addMethodCall('addProfile', array(new Reference($service)));
