@@ -20,8 +20,8 @@ class PluginPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $services = $container->findTaggedServiceIds('filelib.plugin');
-        $filelib = $container->getDefinition('filelib');
+        $services = $container->findTaggedServiceIds('xi_filelib.plugin');
+        $filelib = $container->getDefinition('xi_filelib');
 
         foreach ($services as $service => $params) {
             $filelib->addMethodCall('addPlugin', array(new Reference($service)));
