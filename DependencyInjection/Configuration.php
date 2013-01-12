@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('filelib');
+        $rootNode = $treeBuilder->root('xi_filelib');
 
         $rootNode->children()
 
