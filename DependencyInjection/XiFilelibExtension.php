@@ -181,20 +181,18 @@ class XiFilelibExtension extends Extension
             $container->setDefinition('xi_filelib.slugifier', $slugDefinition);
         }
 
-        $definition->addMethodCall('dispatchInitEvent');
-
         $definition = new Definition('Xi\Filelib\File\FileOperator');
         $container->setDefinition('xi_filelib.fileoperator', $definition);
-        $definition->addArgument(new Reference('filelib'));
+        $definition->addArgument(new Reference('xi_filelib'));
 
         // Folder operator
         $definition = new Definition('Xi\Filelib\Folder\FolderOperator');
         $container->setDefinition('xi_filelib.folderoperator', $definition);
-        $definition->addArgument(new Reference('filelib'));
+        $definition->addArgument(new Reference('xi_filelib'));
 
         $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
         $container->setDefinition('xi_filelib.renderer', $definition);
-        $definition->addArgument(new Reference('filelib'));
+        $definition->addArgument(new Reference('xi_filelib'));
         $definition->addMethodCall('enableAcceleration', array($config['renderer']['accelerate']));
 
         if ($config['renderer']['stripPrefixFromAcceleratedPath']) {

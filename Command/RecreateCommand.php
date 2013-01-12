@@ -30,7 +30,7 @@ class RecreateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('filelib:recreate')
+            ->setName('xi_filelib:recreate')
             ->setDescription('Recreates all filelib assets')
         ;
     }
