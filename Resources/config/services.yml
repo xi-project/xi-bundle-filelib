@@ -1,12 +1,12 @@
 services:
     filelib.renderer.listener:
         class: Xi\Bundle\FilelibBundle\EventListener\RendererListener
-        arguments: [ "@filelib.renderer" ]
+        arguments: [ "@xi_filelib.renderer" ]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
     filelib.twig.extension:
         class: Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension
-        arguments: [ "@filelib", "@filelib.renderer", "@router" ]
+        arguments: [ "@xi_filelib", "@xi_filelib.renderer", "@router" ]
         tags:
             -  { name: twig.extension }

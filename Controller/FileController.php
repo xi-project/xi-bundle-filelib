@@ -10,15 +10,17 @@
 namespace Xi\Bundle\FilelibBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Xi\Filelib\Renderer\Renderer;
+use Xi\Filelib\FileLibrary;
 
 class FileController extends Controller
 {
     public function renderAction($id, $version = 'original', $download = false, $track = false)
     {
-        $fl = $this->get('filelib');
-        $renderer = $this->get('filelib.renderer');
+        $filelib = $this->getFilelib();
+        $renderer = $this->getRenderer();
 
-        $file = $fl->getFileOperator()->find($id);
+        $file = $filelib->getFileOperator()->find($id);
 
         if (!$file) {
             throw $this->createNotFoundException();
@@ -29,5 +31,21 @@ class FileController extends Controller
             'download' => $download,
             'track'    => $track,
         ));
+    }
+
+    /**
+     * @return Renderer
+     */
+    protected function getRenderer()
+    {
+        return $this->get('xi_filelib.renderer');
+    }
+
+    /**
+     * @return FileLibrary
+     */
+    protected function getFilelib()
+    {
+        return $this->get('xi_filelib');
     }
 }
