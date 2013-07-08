@@ -21,14 +21,14 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "xi/filelib": ">=0.7.0"
+        "xi/filelib": "dev-symfony2.2-support"
     },
 
     "require-dev": {
-        "symfony/http-kernel": "2.2.x",
-        "symfony/dependency-injection": "2.2.x",
-        "symfony/config": "2.2.x",
-        "symfony/yaml": "2.2.x",
+        "symfony/http-kernel": ">=2.1.0,<2.3-dev",
+        "symfony/dependency-injection": ">=2.1.0,<2.3-dev",
+        "symfony/config": ">=2.1.0,<2.3-dev",
+        "symfony/yaml": ">=2.1.0,<2.3-dev",
         "twig/twig": ">=1.9.1"
     },
 
