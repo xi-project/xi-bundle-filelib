@@ -26,9 +26,12 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fileOperator = $this->getMock('Xi\Filelib\File\FileOperator');
+        $this->fileOperator = $this->getMockBuilder('Xi\Filelib\File\DefaultFileOperator')
+                                ->setMethods(array('find'))->getMock();
 
-        $filelib = $this->getMock('Xi\Filelib\FileLibrary');
+        $filelib = $this->getMockBuilder('Xi\Filelib\FileLibrary')
+                    ->disableOriginalConstructor()
+                    ->setMethods(array('find', 'findById', 'getFileOperator'))->getMock();
         $filelib->expects($this->any())
                 ->method('getFileOperator')
                 ->will($this->returnValue($this->fileOperator));
@@ -76,7 +79,7 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
         $this->file->expects($this->once())
                    ->method('getStatus')
                    ->will($this->returnValue(File::STATUS_COMPLETED));
-
+        
         $this->fileOperator->expects($this->once())
                            ->method('find')
                            ->with(123)
