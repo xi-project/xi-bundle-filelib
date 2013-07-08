@@ -20,11 +20,11 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.3",
-        "xi/filelib": "dev-symfony2.2-support"
+        "php": ">=5.3.3"
     },
 
     "require-dev": {
+        "xi/filelib": "dev-symfony2.2-support",
         "symfony/http-kernel": ">=2.1.0,<2.3-dev",
         "symfony/dependency-injection": ">=2.1.0,<2.3-dev",
         "symfony/config": ">=2.1.0,<2.3-dev",
