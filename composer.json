@@ -24,11 +24,11 @@
     },
 
     "require-dev": {
-        "xi/filelib": "dev-symfony2.2-support",
-        "symfony/http-kernel": ">=2.1.0,<2.3-dev",
-        "symfony/dependency-injection": ">=2.1.0,<2.3-dev",
-        "symfony/config": ">=2.1.0,<2.3-dev",
-        "symfony/yaml": ">=2.1.0,<2.3-dev",
+        "xi/filelib": "dev-master",
+        "symfony/http-kernel": ">=2.1.0,<2.4-dev",
+        "symfony/dependency-injection": ">=2.1.0,<2.4-dev",
+        "symfony/config": ">=2.1.0,<2.4-dev",
+        "symfony/yaml": ">=2.1.0,<2.4-dev",
         "twig/twig": ">=1.9.1"
     },
 
