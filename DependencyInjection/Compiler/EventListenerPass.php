@@ -20,8 +20,8 @@ class EventListenerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $services = $container->findTaggedServiceIds('xi_filelib.event.listener');
-        $eventDispatcher = $container->findDefinition('xi_filelib.eventdispatcher');
+        $services = $container->findTaggedServiceIds('xi_filelib.event_listener');
+        $eventDispatcher = $container->getDefinition('event_dispatcher');
 
         foreach ($services as $service => $params) {
             $eventDispatcher->addMethodCall('addSubscriber', array(new Reference($service)));

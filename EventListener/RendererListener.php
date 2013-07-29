@@ -12,7 +12,7 @@ namespace Xi\Bundle\FilelibBundle\EventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Xi\Filelib\Renderer\SymfonyRenderer;
+use Xi\Filelib\Renderer\Adapter\SymfonyRendererAdapter;
 
 /**
  * Listens to request and injects renderer with request context
@@ -23,7 +23,7 @@ class RendererListener
 {
     private $renderer;
 
-    public function __construct(SymfonyRenderer $renderer)
+    public function __construct(SymfonyRendererAdapter $renderer)
     {
         $this->renderer = $renderer;
     }

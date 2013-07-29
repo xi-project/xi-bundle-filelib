@@ -10,7 +10,8 @@
 namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
 use Xi\Filelib\FileLibrary;
-use Xi\Filelib\Renderer\SymfonyRenderer;
+use Xi\Filelib\Renderer\Renderer;
+use Xi\Filelib\Publisher\Publisher;
 use Xi\Filelib\File\File;
 use Symfony\Component\Routing\RouterInterface;
 use InvalidArgumentException;
@@ -29,6 +30,11 @@ class FilelibExtension extends \Twig_Extension
     protected $renderer;
 
     /**
+     * @var Publisher
+     */
+    protected $publisher;
+
+    /**
      * @var RouterInterface
      */
     protected $router;
@@ -39,9 +45,9 @@ class FilelibExtension extends \Twig_Extension
         'track' => false
     );
 
-    public function __construct(FileLibrary $filelib, SymfonyRenderer $renderer, RouterInterface $router)
+    public function __construct(Publisher $publisher, Renderer $renderer, RouterInterface $router)
     {
-        $this->filelib = $filelib;
+        $this->publisher = $publisher;
         $this->renderer = $renderer;
         $this->router = $router;
     }
@@ -75,10 +81,10 @@ class FilelibExtension extends \Twig_Extension
     {
         $file = $this->assertFileIsValid($file);
 
-        if ($this->filelib->getAcl()->isFileReadableByAnonymous($file)) {
+        if ($this->publisher->isPublished($file)) {
+
             return $this->getFileUrl($file, $version, $options);
         }
-
         return $this->getRenderUrl($file, $version, $options);
     }
 
@@ -86,10 +92,9 @@ class FilelibExtension extends \Twig_Extension
     {
         $file = $this->assertFileIsValid($file);
 
-        $options['version'] = $version;
         $options = $this->mergeOptionsWithDefaultOptions($options);
 
-        return $this->renderer->getUrl($file, $options);
+        return $this->publisher->getUrlVersion($file, $version, $options);
     }
 
     public function getRenderUrl($file, $version = 'original', $options = array())

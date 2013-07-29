@@ -27,19 +27,20 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
 
+
             ->arrayNode('renderer')
                 ->addDefaultsIfNotSet()
                 ->children()
-                    ->booleanNode('accelerate')
+                    ->booleanNode('enable_acceleration')
                         ->defaultFalse()
                     ->end()
 
-                    ->scalarNode('stripPrefixFromAcceleratedPath')
-                        ->defaultNull()
+                    ->scalarNode('strip_prefix')
+                        ->defaultValue('')
                     ->end()
 
-                    ->scalarNode('addPrefixToAcceleratedPath')
-                        ->defaultNull()
+                    ->scalarNode('add_prefix')
+                        ->defaultValue('')
                     ->end()
 
                 ->end()
@@ -47,8 +48,26 @@ class Configuration implements ConfigurationInterface
 
             ->scalarNode('tempDir')
                 ->defaultNull()
-                ->isRequired()
             ->end()
+
+            ->variableNode('plugins')
+            ->end()
+
+            ->arrayNode('profiles')
+                ->prototype('scalar')
+                ->end()
+            ->end()
+
+            ->arrayNode('publisher')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('beautifurls')
+                    ->defaultFalse()
+                    ->end()
+                ->end()
+            ->end()
+
+            /*
             ->scalarNode('cache')
                 ->defaultNull()
             ->end()
@@ -237,8 +256,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
 
-            ->variableNode('plugins')
-            ->end()
+        */
 
         ->end();
 

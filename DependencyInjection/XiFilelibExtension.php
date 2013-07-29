@@ -36,10 +36,47 @@ class XiFilelibExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $this->loadBackend($container);
-        $this->loadPlatform(
-            isset($config['backend']['platform']) ? $config['backend']['platform'] : array(), $container
-        );
+        $filelib = $container->getDefinition('xi_filelib');
+
+
+        // profiles
+        foreach ($config['profiles'] as $profileName) {
+            $profileKey = "xi_filelib.profiles.{$profileName}";
+            $definition = new Definition('Xi\Filelib\File\FileProfile', array($profileName));
+            $definition->addTag('xi_filelib.profile');
+            $container->setDefinition($profileKey, $definition);
+        }
+
+
+        // plugins
+        if (isset($config['plugins'])) {
+            foreach ($config['plugins'] as $identifier => $pluginConf) {
+                $definition = new Definition($pluginConf['class'], $pluginConf['arguments']);
+                if (isset($pluginConf['calls'])) {
+                    $definition->setMethodCalls($pluginConf['calls']);
+                }
+                $pluginName = 'xi_filelib.plugins.' . $identifier;
+                $container->setDefinition($pluginName, $definition);
+                $filelib->addMethodCall('addPlugin', array(new Reference($pluginName), $pluginConf['profiles']));
+            }
+        }
+
+        $renderer = $container->getDefinition('xi_filelib.renderer');
+        $renderer->addMethodCall('enableAcceleration', array($config['renderer']['enable_acceleration']));
+        $renderer->addMethodCall('stripPrefixFromPath', array($config['renderer']['strip_prefix']));
+        $renderer->addMethodCall('addPrefixToPath', array($config['renderer']['add_prefix']));
+
+        if ($config['publisher']['beautifurls'] == false) {
+            $linker = $container->getDefinition('xi_filelib.publisher.linker');
+            $linker->setClass('Xi\Filelib\Publisher\Linker\SequentialLinker');
+            $linker->setArguments(array());
+        }
+
+
+        return;
+
+
+        $this->loadBackend($config['backend'], $container);
 
         // Storage
 
@@ -181,160 +218,5 @@ class XiFilelibExtension extends Extension
             $container->setDefinition('xi_filelib.slugifier', $slugDefinition);
         }
 
-        $definition = new Definition('Xi\Filelib\File\FileOperator');
-        $container->setDefinition('xi_filelib.fileoperator', $definition);
-        $definition->addArgument(new Reference('xi_filelib'));
-
-        // Folder operator
-        $definition = new Definition('Xi\Filelib\Folder\FolderOperator');
-        $container->setDefinition('xi_filelib.folderoperator', $definition);
-        $definition->addArgument(new Reference('xi_filelib'));
-
-        $definition = new Definition('Xi\Filelib\Renderer\SymfonyRenderer');
-        $container->setDefinition('xi_filelib.renderer', $definition);
-        $definition->addArgument(new Reference('xi_filelib'));
-        $definition->addMethodCall('enableAcceleration', array($config['renderer']['accelerate']));
-
-        if ($config['renderer']['stripPrefixFromAcceleratedPath']) {
-            $definition->addMethodCall('setStripPrefixFromAcceleratedPath', array($config['renderer']['stripPrefixFromAcceleratedPath']));
-        }
-
-        if ($config['renderer']['addPrefixToAcceleratedPath']) {
-            $definition->addMethodCall('setAddPrefixToAcceleratedPath', array($config['renderer']['addPrefixToAcceleratedPath']));
-        }
-    }
-
-    private function loadBackend(ContainerBuilder $container)
-    {
-        $imDefinition = new Definition(
-            'Xi\Filelib\IdentityMap\IdentityMap',
-            array(
-                new Reference('xi_filelib.eventDispatcher'),
-            )
-        );
-        $container->setDefinition('xi_filelib.identityMap', $imDefinition);
-
-        $backendDefinition = new Definition(
-            'Xi\Filelib\Backend\Backend',
-            array(
-                new Reference('xi_filelib.eventDispatcher'),
-                new Reference('xi_filelib.backend.platform'),
-                new Reference('xi_filelib.identityMap'),
-            )
-        );
-        $container->setDefinition('xi_filelib.backend', $backendDefinition);
-    }
-
-
-    /**
-     * @param  array                         $backend
-     * @param  ContainerBuilder              $container
-     * @throws InvalidConfigurationException
-     */
-    private function loadPlatform(array $platform, ContainerBuilder $container)
-    {
-        if (isset($platform['doctrine_orm'])) {
-            $definition = $this->defineDoctrineORMPlatform($platform['doctrine_orm']);
-        } else if (isset($platform['mongo'])) {
-            $definition = $this->defineMongoPlatform($platform['mongo']);
-        } else {
-            throw new InvalidConfigurationException('Platform must be configured.');
-        }
-
-        $container->setDefinition('xi_filelib.backend.platform', $definition);
-    }
-
-    /**
-     * @param  array $platform
-     * @return Definition
-     */
-    private function defineDoctrineORMPlatform(array $platform)
-    {
-        $definition = new Definition('Xi\Filelib\Backend\Platform\DoctrineOrmPlatform', array(
-            new Reference($platform['entity_manager'])
-        ));
-
-        if (isset($platform['folderEntity'])) {
-            $definition->addMethodCall('setFolderEntityName', array($platform['folderEntity']));
-        }
-
-        if (isset($platform['fileEntity'])) {
-            $definition->addMethodCall('setFileEntityName', array($platform['fileEntity']));
-        }
-
-        return $definition;
-    }
-
-    /**
-     * @param  array      $platform
-     * @return Definition
-     */
-    private function defineMongoPlatform(array $platform)
-    {
-        $mongo = new Definition('Mongo', array($platform['connection']));
-        $mongoDb = new Definition('MongoDB', array($mongo, $platform['database']));
-
-        return new Definition('Xi\Filelib\Backend\Platform\MongoPlatform', array(
-            $mongoDb
-        ));
-    }
-
-    /**
-     * @param array            $plugins
-     * @param ContainerBuilder $container
-     * @param array            $config
-     */
-    private function loadPlugins(array $plugins, ContainerBuilder $container,
-        array $config
-    ) {
-        foreach ($plugins as $pluginOptions) {
-            switch ($pluginOptions['type']) {
-                case 'Xi\Filelib\Plugin\Image\ChangeFormatPlugin':
-                    $definition = new Definition($pluginOptions['type'], array(
-                        new Reference('xi_filelib.fileoperator'),
-                        $pluginOptions,
-                    ));
-
-                    break;
-
-                case 'Xi\Filelib\Plugin\Image\VersionPlugin':
-                case 'Xi\Filelib\Plugin\Video\FFmpeg\FFmpegPlugin':
-                    $definition = new Definition($pluginOptions['type'], array(
-                        new Reference('xi_filelib.storage'),
-                        new Reference('xi_filelib.publisher'),
-                        new Reference('xi_filelib.fileoperator'),
-                        $config['tempDir'],
-                        $pluginOptions,
-                    ));
-
-                    break;
-
-                case 'Xi\Filelib\Plugin\Video\ZencoderPlugin':
-                    $definition = new Definition($pluginOptions['type'], array(
-                        new Reference('xi_filelib.storage'),
-                        new Reference('xi_filelib.publisher'),
-                        new Reference('xi_filelib.fileoperator'),
-                        new Definition('Services_Zencoder', array(
-                            $pluginOptions['apiKey'],
-                        )),
-                        new Definition('ZendService\Amazon\S3\S3', array(
-                            $pluginOptions['awsKey'],
-                            $pluginOptions['awsSecretKey'],
-                        )),
-                        $config['tempDir'],
-                        $pluginOptions,
-                    ));
-
-                    break;
-
-                default:
-                    $definition = new Definition($pluginOptions['type'], array(
-                        $pluginOptions,
-                    ));
-            }
-
-            $definition->addTag('xi_filelib.plugin');
-            $container->setDefinition("xi_filelib.plugins.{$pluginOptions['identifier']}", $definition);
-        }
     }
 }
