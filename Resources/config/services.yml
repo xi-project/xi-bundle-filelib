@@ -2,14 +2,12 @@ services:
     xi_filelib:
         class: Xi\Filelib\FileLibrary
         arguments: [ "@xi_filelib.storage", "@xi_filelib.platform", "@event_dispatcher" ]
-        calls:
-            - [setTempDir, ["%kernel.root_dir%/data/temp"]]
 
     xi_filelib.storage:
         class: Xi\Filelib\Storage\FilesystemStorage
-        arguments: [ "%kernel.root_dir%/data/files", "@xi_filelib.storage.directoryIdCalculator" ]
+        arguments: [ "%kernel.root_dir%/data/files", "@xi_filelib.storage.directory_id_calculator", "600", "700" ]
 
-    xi_filelib.storage.directoryIdCalculator:
+    xi_filelib.storage.directory_id_calculator:
         class: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\TimeDirectoryIdCalculator
         arguments: [ 'Y/m/d' ]
 
@@ -19,15 +17,19 @@ services:
 
     xi_filelib.publisher:
         class: Xi\Filelib\Publisher\Publisher
-        arguments: [ "@xi_filelib", "@xi_filelib.publisher.adapter", "@xi_filelib.publisher.linker" ]
+        arguments: [ "@xi_filelib.publisher.adapter", "@xi_filelib.publisher.linker" ]
 
     xi_filelib.publisher.adapter:
         class: Xi\Filelib\Publisher\Adapter\Filesystem\SymlinkFilesystemPublisherAdapter
         arguments: [ "%kernel.root_dir%/../web/files", "600", "700", "/files", "../../app/data/files" ]
 
+    xi_filelib.publisher.automatic_publisher_plugin:
+        class: Xi\Filelib\Publisher\AutomaticPublisherPlugin
+        arguments: [ "@xi_filelib.publisher" ]
+
     xi_filelib.publisher.linker:
         class: Xi\Filelib\Publisher\Linker\BeautifurlLinker
-        arguments: ["@xi_filelib", "@xi_filelib.slugifier"]
+        arguments: ["@xi_filelib.slugifier"]
 
     xi_filelib.slugifier:
         class: Xi\Filelib\Tool\Slugifier\ZendSlugifier
@@ -48,6 +50,15 @@ services:
         arguments: [ "@xi_filelib.renderer.adapter" ]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    xi_filelib.authorization.plugin:
+        class: Xi\Filelib\Authorization\AuthorizationPlugin
+        arguments: [ "@xi_filelib.authorization.adapter" ]
+
+    xi_filelib.authorization.adapter:
+        class: Xi\Filelib\Authorization\Adapter\SymfonyAuthorizationAdapter
+        arguments: [ "@security.context", "@security.acl.provider", true]
+
 
     xi_filelib.twig.extension:
         class: Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension

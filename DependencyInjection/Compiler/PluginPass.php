@@ -25,9 +25,6 @@ class PluginPass implements CompilerPassInterface
 
         foreach ($services as $service => $params) {
             $filelib->addMethodCall('addPlugin', array(new Reference($service)));
-
-
-
         }
     }
 }
