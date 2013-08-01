@@ -33,7 +33,7 @@ class QueueProcessorCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $processor = new DefaultQueueProcessor($this->getContainer()->get('filelib'));
+        $processor = new DefaultQueueProcessor($this->getContainer()->get('xi_filelib'));
 
         $hasMoreMessages = true;
 

@@ -26,8 +26,7 @@ class FileController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $renderer->render($file, array(
-            'version' => $version,
+        return $renderer->render($file, $version, array(
             'download' => $download,
             'track'    => $track,
         ));

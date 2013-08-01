@@ -45,8 +45,9 @@ class FilelibExtension extends \Twig_Extension
         'track' => false
     );
 
-    public function __construct(Publisher $publisher, Renderer $renderer, RouterInterface $router)
+    public function __construct(FileLibrary $filelib, Publisher $publisher, Renderer $renderer, RouterInterface $router)
     {
+        $this->filelib = $filelib;
         $this->publisher = $publisher;
         $this->renderer = $renderer;
         $this->router = $router;
@@ -74,7 +75,7 @@ class FilelibExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'filelib';
+        return 'xi_filelib';
     }
 
     public function getFile($file, $version = 'original', $options = array())

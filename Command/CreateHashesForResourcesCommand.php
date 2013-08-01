@@ -47,6 +47,7 @@ class CreateHashesForResourcesCommand extends ContainerAwareCommand
     {
         $migration = new ResourceRefactorMigration();
         $migration->attachTo($this->filelib);
+        $migration->setOutput($output);
 
         $output->writeln("Starting migration...");
 
