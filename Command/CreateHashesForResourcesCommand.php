@@ -31,7 +31,7 @@ class CreateHashesForResourcesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('filelib:create_hashes_for_resources')
+            ->setName('xi_filelib:create_hashes_for_resources')
             ->setDescription('Creates hashes for resources')
         ;
     }
