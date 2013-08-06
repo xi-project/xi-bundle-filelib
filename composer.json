@@ -38,12 +38,5 @@
         }
     },
     
-    "target-dir": "Xi/Bundle/FilelibBundle",
-
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.8.x-dev"
-        }
-    }
-
+    "target-dir": "Xi/Bundle/FilelibBundle"
 }
