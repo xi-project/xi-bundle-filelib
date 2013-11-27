@@ -110,6 +110,9 @@ class XiFilelibExtension extends Extension
                 $container->setAlias('xi_filelib.authorization.adapter', $config['authorization']['adapter_service']);
             }
             $filelib->addMethodCall('addPlugin', array(new Reference('xi_filelib.authorization.plugin')));
+        } else {
+            $container->removeDefinition('xi_filelib.authorization.adapter');
+            $container->removeDefinition('xi_filelib.authorization.plugin');
         }
 
         if ($config['publisher']['automatic_publisher']) {

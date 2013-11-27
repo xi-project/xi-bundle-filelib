@@ -24,8 +24,8 @@ services:
         arguments: [ "%kernel.root_dir%/../web/files", "600", "700", "/files", "../../app/data/files" ]
 
     xi_filelib.publisher.automatic_publisher_plugin:
-        class: Xi\Filelib\Publisher\AutomaticPublisherPlugin
-        arguments: [ "@xi_filelib.publisher" ]
+        class: Xi\Filelib\Authorization\AutomaticPublisherPlugin
+        arguments: [ "@xi_filelib.publisher", "@xi_filelib.authorization.adapter" ]
 
     xi_filelib.publisher.linker:
         class: Xi\Filelib\Publisher\Linker\BeautifurlLinker
