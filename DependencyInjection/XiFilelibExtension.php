@@ -106,13 +106,22 @@ class XiFilelibExtension extends Extension
         }
 
         if ($config['authorization']['enabled'] === true) {
+
             if ($config['authorization']['adapter_service']) {
                 $container->setAlias('xi_filelib.authorization.adapter', $config['authorization']['adapter_service']);
             }
             $filelib->addMethodCall('addPlugin', array(new Reference('xi_filelib.authorization.plugin')));
+
+            if ($config['publisher']['automatic_publisher']) {
+                $filelib->addMethodCall('addPlugin', array(new Reference('xi_filelib.publisher.automatic_publisher_plugin')));
+            } else {
+                $container->removeDefinition('xi_filelib.publisher.automatic_publisher_plugin');
+            }
+
         } else {
             $container->removeDefinition('xi_filelib.authorization.adapter');
             $container->removeDefinition('xi_filelib.authorization.plugin');
+            $container->removeDefinition('xi_filelib.publisher.automatic_publisher_plugin');
         }
 
         if ($config['publisher']['automatic_publisher']) {
