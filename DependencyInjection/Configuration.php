@@ -105,6 +105,7 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->arrayNode('twig')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('not_found_url')
                     ->defaultValue('//place.manatee.lc/14/300/300.svg')
