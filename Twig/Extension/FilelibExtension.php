@@ -16,6 +16,7 @@ use Xi\Filelib\File\File;
 use Symfony\Component\Routing\RouterInterface;
 use InvalidArgumentException;
 use Twig_Function_Method;
+use Xi\Filelib\Storage\FileIOException;
 
 class FilelibExtension extends \Twig_Extension
 {
@@ -93,12 +94,7 @@ class FilelibExtension extends \Twig_Extension
     {
         $file = $this->assertFileIsValid($file);
         if ($this->publisher->isPublished($file)) {
-
-            if ($file->hasVersion($version) || $file->getResource()->hasVersion()) {
-                return $this->getFileUrl($file, $version, $options);
-            } else {
-                return $this->notFoundUrl;
-            }
+            return $this->getFileUrl($file, $version, $options);
         }
         return $this->getRenderUrl($file, $version, $options);
     }
@@ -109,7 +105,17 @@ class FilelibExtension extends \Twig_Extension
 
         $options = $this->mergeOptionsWithDefaultOptions($options);
 
-        return $this->publisher->getUrlVersion($file, $version, $options);
+        if ($file->hasVersion($version) || $file->getResource()->hasVersion($version)) {
+            try {
+                return $this->publisher->getUrlVersion($file, $version, $options);
+            } catch (FileIOException $e) {
+                return $this->notFoundUrl;
+            }
+        } else {
+            return $this->notFoundUrl;
+        }
+
+
     }
 
     public function getRenderUrl($file, $version = 'original', $options = array())
