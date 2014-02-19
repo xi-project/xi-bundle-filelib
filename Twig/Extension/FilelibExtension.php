@@ -39,18 +39,29 @@ class FilelibExtension extends \Twig_Extension
      */
     protected $router;
 
+    /**
+     * @var string
+     */
+    protected $notFoundUrl;
+
     protected $defaultOptions = array(
         'version' => 'original',
         'download' => false,
         'track' => false
     );
 
-    public function __construct(FileLibrary $filelib, Publisher $publisher, Renderer $renderer, RouterInterface $router)
-    {
+    public function __construct(
+        FileLibrary $filelib,
+        Publisher $publisher,
+        Renderer $renderer,
+        RouterInterface $router,
+        $notFoundUrl
+    ) {
         $this->filelib = $filelib;
         $this->publisher = $publisher;
         $this->renderer = $renderer;
         $this->router = $router;
+        $this->notFoundUrl = $notFoundUrl;
     }
 
     private function mergeOptionsWithDefaultOptions($options)
@@ -81,10 +92,13 @@ class FilelibExtension extends \Twig_Extension
     public function getFile($file, $version = 'original', $options = array())
     {
         $file = $this->assertFileIsValid($file);
-
         if ($this->publisher->isPublished($file)) {
 
-            return $this->getFileUrl($file, $version, $options);
+            if ($file->hasVersion($version) || $file->getResource()->hasVersion()) {
+                return $this->getFileUrl($file, $version, $options);
+            } else {
+                return $this->notFoundUrl;
+            }
         }
         return $this->getRenderUrl($file, $version, $options);
     }

@@ -104,6 +104,15 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
 
+            ->arrayNode('twig')
+                ->children()
+                    ->scalarNode('not_found_url')
+                    ->defaultValue('//place.manatee.lc/14/300/300.svg')
+                    ->end()
+                ->end()
+            ->end()
+
+
         ->end();
 
         return $treeBuilder;

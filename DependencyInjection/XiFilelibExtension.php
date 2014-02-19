@@ -87,6 +87,9 @@ class XiFilelibExtension extends Extension
         $renderer->addMethodCall('stripPrefixFromPath', array($config['renderer']['strip_prefix']));
         $renderer->addMethodCall('addPrefixToPath', array($config['renderer']['add_prefix']));
 
+        $twig = $container->getDefinition('xi_filelib.twig.extension');
+        $twig->addArgument($config['twig']['not_found_url']);
+
         if ($config['publisher']['beautifurls'] == false) {
             $linker = $container->getDefinition('xi_filelib.publisher.linker');
             $linker->setClass('Xi\Filelib\Publisher\Linker\SequentialLinker');
