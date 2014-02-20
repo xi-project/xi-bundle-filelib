@@ -62,6 +62,8 @@ services:
 
     xi_filelib.twig.extension:
         class: Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension
-        arguments: [ "@xi_filelib", "@xi_filelib.publisher", "@xi_filelib.renderer", "@router" ]
+        arguments: [ "@xi_filelib.publisher", "@xi_filelib.renderer", "@router" ]
+        calls:
+            - [attachTo, ["@xi_filelib"]]
         tags:
             -  { name: twig.extension }

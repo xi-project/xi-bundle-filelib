@@ -9,6 +9,7 @@
 
 namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
+use Xi\Filelib\File\FileOperator;
 use Xi\Filelib\FileLibrary;
 use Xi\Filelib\Renderer\Renderer;
 use Xi\Filelib\Publisher\Publisher;
@@ -17,13 +18,14 @@ use Symfony\Component\Routing\RouterInterface;
 use InvalidArgumentException;
 use Twig_Function_Method;
 use Xi\Filelib\Storage\FileIOException;
+use Xi\Filelib\Attacher;
 
-class FilelibExtension extends \Twig_Extension
+class FilelibExtension extends \Twig_Extension implements Attacher
 {
     /**
-     * @var FileLibrary;
+     * @var FileOperator;
      */
-    protected $filelib;
+    protected $fileOperator;
 
     /**
      * @var Renderer
@@ -52,17 +54,20 @@ class FilelibExtension extends \Twig_Extension
     );
 
     public function __construct(
-        FileLibrary $filelib,
         Publisher $publisher,
         Renderer $renderer,
         RouterInterface $router,
         $notFoundUrl
     ) {
-        $this->filelib = $filelib;
         $this->publisher = $publisher;
         $this->renderer = $renderer;
         $this->router = $router;
         $this->notFoundUrl = $notFoundUrl;
+    }
+
+    public function attachTo(FileLibrary $filelib)
+    {
+        $this->fileOperator = $filelib->getFileOperator();
     }
 
     private function mergeOptionsWithDefaultOptions($options)
@@ -150,7 +155,7 @@ class FilelibExtension extends \Twig_Extension
     private function assertFileIsValid($file)
     {
         if (is_numeric($file)) {
-            $file = $this->filelib->getFileOperator()->find($file);
+            $file = $this->fileOperator->find($file);
         }
 
         if (!$file instanceof File) {
