@@ -126,10 +126,5 @@ class XiFilelibExtension extends Extension
             $container->removeDefinition('xi_filelib.authorization.plugin');
             $container->removeDefinition('xi_filelib.publisher.automatic_publisher_plugin');
         }
-
-        if ($config['publisher']['automatic_publisher']) {
-            $filelib->addMethodCall('addPlugin', array(new Reference('xi_filelib.publisher.automatic_publisher_plugin')));
-        }
-
     }
 }
