@@ -58,9 +58,6 @@ class XiFilelibExtension extends Extension
             $calc->setArguments($config['storage']['directory_id_calculator']['arguments']);
         }
 
-
-
-
         // profiles
         foreach ($config['profiles'] as $profileName) {
             $profileKey = "xi_filelib.profiles.{$profileName}";
@@ -102,10 +99,8 @@ class XiFilelibExtension extends Extension
             $adapter->setArguments($config['publisher']['adapter']['arguments']);
         }
 
-        if ($config['queue']) {
-            $queue = new Definition($config['queue']['class'], $config['queue']['arguments']);
-            $container->setDefinition('xi_filelib.queue', $queue);
-            $filelib->addMethodCall('setQueue', array(new Reference('xi_filelib.queue')));
+        if ($config['queue_adapter_service']) {
+            $filelib->addMethodCall('createQueueFromAdapter', array(new Reference($config['queue_adapter_service'])));
         }
 
         if ($config['authorization']['enabled'] === true) {

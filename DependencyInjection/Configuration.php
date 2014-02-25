@@ -55,8 +55,8 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
 
-            ->variableNode('queue')
-                ->defaultNull()
+            ->scalarNode('queue_adapter_service')
+                ->defaultValue('pekkis_queue.adapter')
             ->end()
 
             ->arrayNode('renderer')

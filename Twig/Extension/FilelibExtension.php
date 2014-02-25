@@ -16,9 +16,9 @@ use Xi\Filelib\Publisher\Publisher;
 use Xi\Filelib\File\File;
 use Symfony\Component\Routing\RouterInterface;
 use InvalidArgumentException;
-use Twig_Function_Method;
 use Xi\Filelib\Storage\FileIOException;
 use Xi\Filelib\Attacher;
+use Twig_SimpleFunction;
 
 class FilelibExtension extends \Twig_Extension implements Attacher
 {
@@ -78,10 +78,10 @@ class FilelibExtension extends \Twig_Extension implements Attacher
     public function getFunctions()
     {
         return array(
-            'filelib_file' => new Twig_Function_Method($this, 'getFile', array('is_safe' => array('html'))),
-            'filelib_url' => new Twig_Function_Method($this, 'getFileUrl', array('is_safe' => array('html'))),
-            'filelib_render' => new Twig_Function_Method($this, 'getRenderUrl', array('is_safe' => array('html'))),
-            'filelib_is_file_completed' => new Twig_Function_Method($this, 'isFileCompleted'),
+            'filelib_file' => new Twig_SimpleFunction($this, 'getFile', array('is_safe' => array('html'))),
+            'filelib_url' => new Twig_SimpleFunction($this, 'getFileUrl', array('is_safe' => array('html'))),
+            'filelib_render' => new Twig_SimpleFunction($this, 'getRenderUrl', array('is_safe' => array('html'))),
+            'filelib_is_file_completed' => new Twig_SimpleFunction($this, 'isFileCompleted'),
         );
     }
 

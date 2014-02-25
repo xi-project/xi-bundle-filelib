@@ -1,55 +1,38 @@
 xi_filelib:
-    tempDir: %kernel.root_dir%/data/temp
-    backend:
-        platform:
-            doctrine_orm:
-                entity_manager: doctrine.orm.default_entity_manager
-    storage_filesystem:
-        directoryPermission: '775'
-        filePermission: '644'
-        root: %kernel.root_dir%/data/files
-        directoryIdCalculator:
-            type: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\TimeDirectoryIdCalculator
+
+    temp_dir: %kernel.root_dir%/filelib/temp
+
+    renderer:
+        enable_acceleration: false
+        add_prefix: "/protected"
+        strip_prefix: "/some/lussing"
+
+    authorization:
+        enabled: false
+        adapter_service: "some.random.service"
+
+    storage:
+        root: %kernel.root_dir%/filelib/files
+        file_permission: "664"
+        directory_permission: "775"
+        directory_id_calculator:
+            class: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\LeveledDirectoryIdCalculator
+            arguments: [ 3, 500 ]
+
     publisher:
-        type: Xi\Filelib\Publisher\Filesystem\SymlinkFilesystemPublisher
-    profiles:
-        default:
-            identifier: default
-            description: 'Default description'
-            accessToOriginal: false
-            publishOriginal: false
-            linker:
-                type: Xi\Filelib\Linker\SequentialLinker
+        automatic_publisher: true
+        beautifurls: false
+        adapter:
+            class: Xi\Filelib\Publisher\Adapter\Filesystem\SymlinkFilesystemPublisherAdapter
+            arguments: [ "%kernel.root_dir%/../web/files", "664", "775", "/files", "../../app/filelib/files" ]
+
+    twig:
+        not_found_url: "/images/404.jpg"
+
+    profiles: ['lusso']
+
     plugins:
-        change_format:
-            identifier: change_format
-            type: Xi\Filelib\Plugin\Image\ChangeFormatPlugin
-            profiles: [default]
-            targetExtension: jpg
-        version:
-            identifier: version
-            type: Xi\Filelib\Plugin\Image\VersionPlugin
-            profiles: [default]
-        zencoder:
-            identifier: zencoder
-            type: Xi\Filelib\Plugin\Video\ZencoderPlugin
-            profiles: [default]
-            apiKey: api key
-            awsKey: aws key
-            awsSecretKey: aws secret key
-            awsBucket: aws bucket
-            outputs:
-                pygmi:
-                    extension: mp4
-                    output:
-                        label: pygmi
-                        device_profile: v2/mobile/legacy
-                watussi:
-                    extension: mp4
-                    output:
-                        label: watussi
-                        device_profile: v2/mobile/advanced
-        ffmpeg:
-            identifier: ffmpeg
-            type: Xi\Filelib\Plugin\Video\FFmpeg\FFmpegPlugin
-            profiles: [default]
+         randomizer:
+            profiles: [default, lusso]
+            class: Xi\Filelib\Plugin\RandomizeNamePlugin
+            arguments: []

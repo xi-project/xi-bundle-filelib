@@ -12,7 +12,6 @@ namespace Xi\Bundle\FilelibBundle\Tests\Twig\Extension;
 use PHPUnit_Framework_TestCase;
 use Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension;
 use Xi\Filelib\File\File;
-use Twig_Function_Method;
 
 class FilelibExtensionTest extends PHPUnit_Framework_TestCase
 {
@@ -31,7 +30,7 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $filelib = $this->getMock('Xi\Filelib\FileLibrary');
+        $filelib = $this->getMockBuilder('Xi\Filelib\FileLibrary')->disableOriginalConstructor()->getMock();
         $filelib->expects($this->any())
                 ->method('getFileOperator')
                 ->will($this->returnValue($this->fileOperator));
@@ -39,12 +38,13 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
         $this->file = $this->getMock('Xi\Filelib\File\File');
 
         $this->filelibExtension = new FilelibExtension(
-            $filelib,
-            $this->getMockBuilder('Xi\Filelib\Renderer\SymfonyRenderer')
-                 ->disableOriginalConstructor()
-                 ->getMockForAbstractClass(),
-            $this->getMock('Symfony\Component\Routing\RouterInterface')
+            $this->getMockBuilder('Xi\Filelib\Publisher\Publisher')->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder('Xi\Filelib\Renderer\AcceleratedRenderer')->disableOriginalConstructor()->getMock(),
+            $this->getMock('Symfony\Component\Routing\RouterInterface'),
+            '//place.manatee.lc/14/300/300.svg'
         );
+
+        $this->filelibExtension->attachTo($filelib);
     }
 
     /**
@@ -110,10 +110,10 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'filelib_file' => new Twig_Function_Method($this->filelibExtension, 'getFile', array('is_safe' => array('html'))),
-                'filelib_url' => new Twig_Function_Method($this->filelibExtension, 'getFileUrl', array('is_safe' => array('html'))),
-                'filelib_render' => new Twig_Function_Method($this->filelibExtension, 'getRenderUrl', array('is_safe' => array('html'))),
-                'filelib_is_file_completed' => new Twig_Function_Method($this->filelibExtension, 'isFileCompleted'),
+                'filelib_file' => new \Twig_SimpleFunction($this->filelibExtension, 'getFile', array('is_safe' => array('html'))),
+                'filelib_url' => new \Twig_SimpleFunction($this->filelibExtension, 'getFileUrl', array('is_safe' => array('html'))),
+                'filelib_render' => new \Twig_SimpleFunction($this->filelibExtension, 'getRenderUrl', array('is_safe' => array('html'))),
+                'filelib_is_file_completed' => new \Twig_SimpleFunction($this->filelibExtension, 'isFileCompleted'),
             ),
             $this->filelibExtension->getFunctions()
         );
