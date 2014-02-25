@@ -12,6 +12,7 @@ namespace Xi\Bundle\FilelibBundle\Tests\Twig\Extension;
 use PHPUnit_Framework_TestCase;
 use Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension;
 use Xi\Filelib\File\File;
+use Twig_SimpleFunction;
 
 class FilelibExtensionTest extends PHPUnit_Framework_TestCase
 {
@@ -110,10 +111,10 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'filelib_file' => new \Twig_SimpleFunction($this->filelibExtension, 'getFile', array('is_safe' => array('html'))),
-                'filelib_url' => new \Twig_SimpleFunction($this->filelibExtension, 'getFileUrl', array('is_safe' => array('html'))),
-                'filelib_render' => new \Twig_SimpleFunction($this->filelibExtension, 'getRenderUrl', array('is_safe' => array('html'))),
-                'filelib_is_file_completed' => new \Twig_SimpleFunction($this->filelibExtension, 'isFileCompleted'),
+                'filelib_file' => new Twig_SimpleFunction('filelib_file', array($this->filelibExtension, 'getFile'), array('is_safe' => array('html'))),
+                'filelib_url' => new Twig_SimpleFunction('filelib_url', array($this->filelibExtension, 'getFileUrl'), array('is_safe' => array('html'))),
+                'filelib_render' => new Twig_SimpleFunction('filelib_render', array($this->filelibExtension, 'getRenderUrl'), array('is_safe' => array('html'))),
+                'filelib_is_file_completed' => new Twig_SimpleFunction('filelib_is_file_completed', array($this->filelibExtension, 'isFileCompleted')),
             ),
             $this->filelibExtension->getFunctions()
         );
