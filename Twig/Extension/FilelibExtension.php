@@ -9,19 +9,23 @@
 
 namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
+use Xi\Filelib\File\FileOperator;
 use Xi\Filelib\FileLibrary;
-use Xi\Filelib\Renderer\SymfonyRenderer;
+use Xi\Filelib\Renderer\Renderer;
+use Xi\Filelib\Publisher\Publisher;
 use Xi\Filelib\File\File;
 use Symfony\Component\Routing\RouterInterface;
 use InvalidArgumentException;
 use Twig_Function_Method;
+use Xi\Filelib\Storage\FileIOException;
+use Xi\Filelib\Attacher;
 
-class FilelibExtension extends \Twig_Extension
+class FilelibExtension extends \Twig_Extension implements Attacher
 {
     /**
-     * @var FileLibrary;
+     * @var FileOperator;
      */
-    protected $filelib;
+    protected $fileOperator;
 
     /**
      * @var Renderer
@@ -29,9 +33,19 @@ class FilelibExtension extends \Twig_Extension
     protected $renderer;
 
     /**
+     * @var Publisher
+     */
+    protected $publisher;
+
+    /**
      * @var RouterInterface
      */
     protected $router;
+
+    /**
+     * @var string
+     */
+    protected $notFoundUrl;
 
     protected $defaultOptions = array(
         'version' => 'original',
@@ -39,11 +53,21 @@ class FilelibExtension extends \Twig_Extension
         'track' => false
     );
 
-    public function __construct(FileLibrary $filelib, SymfonyRenderer $renderer, RouterInterface $router)
-    {
-        $this->filelib = $filelib;
+    public function __construct(
+        Publisher $publisher,
+        Renderer $renderer,
+        RouterInterface $router,
+        $notFoundUrl
+    ) {
+        $this->publisher = $publisher;
         $this->renderer = $renderer;
         $this->router = $router;
+        $this->notFoundUrl = $notFoundUrl;
+    }
+
+    public function attachTo(FileLibrary $filelib)
+    {
+        $this->fileOperator = $filelib->getFileOperator();
     }
 
     private function mergeOptionsWithDefaultOptions($options)
@@ -68,17 +92,15 @@ class FilelibExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'filelib';
+        return 'xi_filelib';
     }
 
     public function getFile($file, $version = 'original', $options = array())
     {
         $file = $this->assertFileIsValid($file);
-
-        if ($this->filelib->getAcl()->isFileReadableByAnonymous($file)) {
+        if ($this->publisher->isPublished($file)) {
             return $this->getFileUrl($file, $version, $options);
         }
-
         return $this->getRenderUrl($file, $version, $options);
     }
 
@@ -86,10 +108,19 @@ class FilelibExtension extends \Twig_Extension
     {
         $file = $this->assertFileIsValid($file);
 
-        $options['version'] = $version;
         $options = $this->mergeOptionsWithDefaultOptions($options);
 
-        return $this->renderer->getUrl($file, $options);
+        if ($file->hasVersion($version) || $file->getResource()->hasVersion($version)) {
+            try {
+                return $this->publisher->getUrlVersion($file, $version, $options);
+            } catch (FileIOException $e) {
+                return $this->notFoundUrl;
+            }
+        } else {
+            return $this->notFoundUrl;
+        }
+
+
     }
 
     public function getRenderUrl($file, $version = 'original', $options = array())
@@ -124,7 +155,7 @@ class FilelibExtension extends \Twig_Extension
     private function assertFileIsValid($file)
     {
         if (is_numeric($file)) {
-            $file = $this->filelib->getFileOperator()->find($file);
+            $file = $this->fileOperator->find($file);
         }
 
         if (!$file instanceof File) {

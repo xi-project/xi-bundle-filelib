@@ -16,7 +16,6 @@ class Configuration implements ConfigurationInterface
 {
     /**
      * Generates the configuration tree builder.
-     * @todo : find out why symfony 2.1 fails on some of the following, commented methods
      *
      * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */
@@ -27,218 +26,93 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
 
+            ->arrayNode('authorization')
+                ->children()
+                    ->scalarNode('enabled')
+                        ->defaultFalse()
+                    ->end()
+                    ->scalarNode('adapter_service')
+                        ->defaultNull()
+                    ->end()
+                ->end()
+            ->end()
+
+            ->arrayNode('storage')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('file_permission')
+                        ->defaultValue('600')
+                    ->end()
+                    ->scalarNode('directory_permission')
+                        ->defaultValue('700')
+                    ->end()
+                    ->scalarNode('root')
+                        ->defaultValue('%kernel.root_dir%/data/files')
+                    ->end()
+                    ->variableNode('directory_id_calculator')
+                        ->defaultNull()
+                    ->end()
+            ->end()
+            ->end()
+
+            ->variableNode('queue')
+                ->defaultNull()
+            ->end()
+
             ->arrayNode('renderer')
                 ->addDefaultsIfNotSet()
                 ->children()
-                    ->booleanNode('accelerate')
+                    ->booleanNode('enable_acceleration')
                         ->defaultFalse()
                     ->end()
 
-                    ->scalarNode('stripPrefixFromAcceleratedPath')
-                        ->defaultNull()
+                    ->scalarNode('strip_prefix')
+                        ->defaultValue('')
                     ->end()
 
-                    ->scalarNode('addPrefixToAcceleratedPath')
-                        ->defaultNull()
+                    ->scalarNode('add_prefix')
+                        ->defaultValue('')
                     ->end()
 
                 ->end()
             ->end()
 
-            ->scalarNode('tempDir')
+            ->scalarNode('temp_dir')
                 ->defaultNull()
-                ->isRequired()
-            ->end()
-            ->scalarNode('cache')
-                ->defaultNull()
-            ->end()
-
-            ->scalarNode('acl')
-                ->defaultNull()
-            ->end()
-
-            ->arrayNode('queue')
-                // ->defaultValue(array())
-                ->children()
-
-                    ->scalarNode('type')
-                    ->end()
-
-                    ->arrayNode('arguments')
-                        ->prototype('scalar')
-                        ->end()
-                    ->end()
-
-                    ->arrayNode('methods')
-                        // ->useAttributeAsKey('id')
-                        ->children()
-                            ->scalarNode('name')
-                            ->end()
-
-                            ->arrayNode('arguments')
-                            ->end()
-                        ->end()
-                    ->end()
-
-                ->end()
-            ->end()
-
-            ->arrayNode('transliterator')
-                // ->defaultValue(array())
-                ->children()
-
-                    ->scalarNode('type')
-                    ->end()
-
-                    ->arrayNode('arguments')
-                    ->prototype('scalar')
-                    ->end()
-                    ->end()
-
-                ->end()
-            ->end()
-
-            ->arrayNode('slugifier')
-                // ->defaultValue(array())
-                ->children()
-
-                    ->scalarNode('type')
-                    ->end()
-
-                    ->arrayNode('arguments')
-                    ->prototype('scalar')
-                    ->end()
-                    ->end()
-
-                ->end()
-            ->end()
-
-            ->arrayNode('backend')
-                ->isRequired()
-
-                ->children()
-
-                    ->arrayNode('platform')
-                        ->children()
-
-                            ->arrayNode('doctrine_orm')
-                                ->children()
-                                    ->scalarNode('entity_manager')
-                                        ->isRequired()
-                                    ->end()
-
-                                    ->scalarNode('fileEntity')
-                                    ->end()
-
-                                    ->scalarNode('folderEntity')
-                                    ->end()
-                                ->end()
-                            ->end()
-
-                            ->arrayNode('mongo')
-                                ->children()
-                                    ->scalarNode('connection')
-                                        ->isRequired()
-                                    ->end()
-
-                                    ->scalarNode('database')
-                                        ->isRequired()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-
-            ->arrayNode('storage_filesystem')
-                ->isRequired()
-
-                ->children()
-                    ->scalarNode('directoryPermission')
-                        ->isRequired()
-                    ->end()
-
-                    ->scalarNode('filePermission')
-                        ->isRequired()
-                    ->end()
-
-                    ->scalarNode('root')
-                        ->isRequired()
-                    ->end()
-
-                    ->arrayNode('directoryIdCalculator')
-                        ->isRequired()
-
-                        ->children()
-                            ->scalarNode('type')
-                                ->isRequired()
-                            ->end()
-
-                            ->arrayNode('options')
-                                ->useAttributeAsKey('id')
-
-                                ->prototype('scalar')
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-
-            ->arrayNode('publisher')
-                ->isRequired()
-
-                ->children()
-                    ->scalarNode('type')
-                        ->isRequired()
-                    ->end()
-
-                    ->arrayNode('options')
-                        ->useAttributeAsKey('id')
-
-                        ->prototype('scalar')
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-
-            ->arrayNode('profiles')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('identifier')
-                        ->end()
-
-                        ->scalarNode('description')
-                        ->end()
-
-                        ->scalarNode('accessToOriginal')
-                        ->end()
-
-                        ->scalarNode('publishOriginal')
-                        ->end()
-
-                        ->arrayNode('linker')
-                            ->isRequired()
-
-                            ->children()
-                                ->scalarNode('type')
-                                ->end()
-
-                                ->arrayNode('options')
-                                    ->useAttributeAsKey('id')
-
-                                    ->prototype('scalar')
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
             ->end()
 
             ->variableNode('plugins')
             ->end()
+
+            ->arrayNode('profiles')
+                ->prototype('scalar')
+                ->end()
+            ->end()
+
+            ->arrayNode('publisher')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('automatic_publisher')
+                        ->defaultFalse()
+                    ->end()
+                            ->booleanNode('beautifurls')
+                        ->defaultFalse()
+                    ->end()
+                    ->variableNode('adapter')
+                        ->defaultNull()
+                    ->end()
+            ->end()
+            ->end()
+
+            ->arrayNode('twig')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('not_found_url')
+                    ->defaultValue('//place.manatee.lc/14/300/300.svg')
+                    ->end()
+                ->end()
+            ->end()
+
 
         ->end();
 

@@ -1,12 +1,69 @@
 services:
-    filelib.renderer.listener:
+    xi_filelib:
+        class: Xi\Filelib\FileLibrary
+        arguments: [ "@xi_filelib.storage", "@xi_filelib.platform", "@event_dispatcher" ]
+
+    xi_filelib.storage:
+        class: Xi\Filelib\Storage\FilesystemStorage
+        arguments: [ "%kernel.root_dir%/data/files", "@xi_filelib.storage.directory_id_calculator", "600", "700" ]
+
+    xi_filelib.storage.directory_id_calculator:
+        class: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\TimeDirectoryIdCalculator
+        arguments: [ 'Y/m/d' ]
+
+    xi_filelib.platform:
+        class: Xi\Filelib\Backend\Platform\DoctrineOrmPlatform
+        arguments: [ "@doctrine.orm.default_entity_manager" ]
+
+    xi_filelib.publisher:
+        class: Xi\Filelib\Publisher\Publisher
+        arguments: [ "@xi_filelib.publisher.adapter", "@xi_filelib.publisher.linker" ]
+
+    xi_filelib.publisher.adapter:
+        class: Xi\Filelib\Publisher\Adapter\Filesystem\SymlinkFilesystemPublisherAdapter
+        arguments: [ "%kernel.root_dir%/../web/files", "600", "700", "/files", "../../app/data/files" ]
+
+    xi_filelib.publisher.automatic_publisher_plugin:
+        class: Xi\Filelib\Authorization\AutomaticPublisherPlugin
+        arguments: [ "@xi_filelib.publisher", "@xi_filelib.authorization.adapter" ]
+
+    xi_filelib.publisher.linker:
+        class: Xi\Filelib\Publisher\Linker\BeautifurlLinker
+        arguments: ["@xi_filelib.slugifier"]
+
+    xi_filelib.slugifier:
+        class: Xi\Filelib\Tool\Slugifier\ZendSlugifier
+        arguments: ["@xi_filelib.transliterator"]
+
+    xi_filelib.transliterator:
+        class: Xi\Transliterator\IntlTransliterator
+
+    xi_filelib.renderer:
+        class: Xi\Filelib\Renderer\AcceleratedRenderer
+        arguments: [ "@xi_filelib", "@xi_filelib.renderer.adapter" ]
+
+    xi_filelib.renderer.adapter:
+        class: Xi\Filelib\Renderer\Adapter\SymfonyRendererAdapter
+
+    xi_filelib.renderer.listener:
         class: Xi\Bundle\FilelibBundle\EventListener\RendererListener
-        arguments: [ "@xi_filelib.renderer" ]
+        arguments: [ "@xi_filelib.renderer.adapter" ]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
-    filelib.twig.extension:
+    xi_filelib.authorization.plugin:
+        class: Xi\Filelib\Authorization\AuthorizationPlugin
+        arguments: [ "@xi_filelib.authorization.adapter" ]
+
+    xi_filelib.authorization.adapter:
+        class: Xi\Filelib\Authorization\Adapter\SymfonyAuthorizationAdapter
+        arguments: [ "@security.context", "@security.acl.provider", true]
+
+
+    xi_filelib.twig.extension:
         class: Xi\Bundle\FilelibBundle\Twig\Extension\FilelibExtension
-        arguments: [ "@xi_filelib", "@xi_filelib.renderer", "@router" ]
+        arguments: [ "@xi_filelib.publisher", "@xi_filelib.renderer", "@router" ]
+        calls:
+            - [attachTo, ["@xi_filelib"]]
         tags:
             -  { name: twig.extension }

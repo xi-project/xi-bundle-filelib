@@ -21,7 +21,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "xi/filelib": "0.8.*"
+        "xi/filelib": "0.9.*"
     },
 
     "require-dev": {

@@ -31,7 +31,7 @@ class CreateHashesForResourcesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('filelib:create_hashes_for_resources')
+            ->setName('xi_filelib:create_hashes_for_resources')
             ->setDescription('Creates hashes for resources')
         ;
     }
@@ -40,12 +40,14 @@ class CreateHashesForResourcesCommand extends ContainerAwareCommand
     {
         parent::initialize($input, $output);
 
-        $this->filelib = $this->getContainer()->get('filelib');
+        $this->filelib = $this->getContainer()->get('xi_filelib');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $migration = new ResourceRefactorMigration($this->filelib);
+        $migration = new ResourceRefactorMigration();
+        $migration->attachTo($this->filelib);
+        $migration->setOutput($output);
 
         $output->writeln("Starting migration...");
 

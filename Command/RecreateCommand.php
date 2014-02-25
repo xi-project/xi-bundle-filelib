@@ -38,7 +38,7 @@ class RecreateCommand extends ContainerAwareCommand
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         parent::initialize($input, $output);
-        $this->filelib = $this->getContainer()->get('filelib');
+        $this->filelib = $this->getContainer()->get('xi_filelib');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
