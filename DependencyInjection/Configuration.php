@@ -55,7 +55,7 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
 
-            ->variableNode('queue')
+            ->scalarNode('queue_adapter_service')
                 ->defaultNull()
             ->end()
 
