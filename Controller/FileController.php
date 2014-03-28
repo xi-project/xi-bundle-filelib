@@ -20,7 +20,7 @@ class FileController extends Controller
         $filelib = $this->getFilelib();
         $renderer = $this->getRenderer();
 
-        $file = $filelib->getFileOperator()->find($id);
+        $file = $filelib->getFileRepository()->find($id);
 
         if (!$file) {
             throw $this->createNotFoundException();

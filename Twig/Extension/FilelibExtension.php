@@ -9,7 +9,7 @@
 
 namespace Xi\Bundle\FilelibBundle\Twig\Extension;
 
-use Xi\Filelib\File\FileOperator;
+use Xi\Filelib\File\FileRepository;
 use Xi\Filelib\FileLibrary;
 use Xi\Filelib\Renderer\Renderer;
 use Xi\Filelib\Publisher\Publisher;
@@ -23,7 +23,7 @@ use Twig_SimpleFunction;
 class FilelibExtension extends \Twig_Extension implements Attacher
 {
     /**
-     * @var FileOperator;
+     * @var FileRepository;
      */
     protected $fileOperator;
 
@@ -67,7 +67,7 @@ class FilelibExtension extends \Twig_Extension implements Attacher
 
     public function attachTo(FileLibrary $filelib)
     {
-        $this->fileOperator = $filelib->getFileOperator();
+        $this->fileOperator = $filelib->getFileRepository();
     }
 
     private function mergeOptionsWithDefaultOptions($options)
