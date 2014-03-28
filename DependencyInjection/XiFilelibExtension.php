@@ -61,7 +61,7 @@ class XiFilelibExtension extends Extension
         // profiles
         foreach ($config['profiles'] as $profileName) {
             $profileKey = "xi_filelib.profiles.{$profileName}";
-            $definition = new Definition('Xi\Filelib\File\FileProfile', array($profileName));
+            $definition = new Definition('Xi\Filelib\Profile\FileProfile', array($profileName));
             $container->setDefinition($profileKey, $definition);
             $filelib->addMethodCall('addProfile', array(new Reference($profileKey)));
         }
@@ -102,6 +102,11 @@ class XiFilelibExtension extends Extension
         if ($config['queue_adapter_service']) {
             $filelib->addMethodCall('createQueueFromAdapter', array(new Reference($config['queue_adapter_service'])));
         }
+
+        if ($config['cache_adapter_service']) {
+            $filelib->addMethodCall('createCacheFromAdapter', array(new Reference($config['cache_adapter_service'])));
+        }
+
 
         if ($config['authorization']['enabled'] === true) {
 
