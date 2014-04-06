@@ -59,6 +59,10 @@ class Configuration implements ConfigurationInterface
                 ->defaultNull()
             ->end()
 
+            ->scalarNode('cache_adapter_service')
+                ->defaultNull()
+            ->end()
+
             ->arrayNode('renderer')
                 ->addDefaultsIfNotSet()
                 ->children()
