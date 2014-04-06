@@ -32,8 +32,16 @@ services:
         arguments: ["@xi_filelib.slugifier"]
 
     xi_filelib.slugifier:
-        class: Xi\Filelib\Tool\Slugifier\ZendSlugifier
-        arguments: ["@xi_filelib.transliterator"]
+        class: Xi\Filelib\Tool\Slugifier\Slugifier
+        arguments: ["@xi_filelib.pretransliterator"]
+
+    xi_filelib.slugigier_adapter:
+        class: Xi\Filelib\Tool\Slugifier\Adapter\CocurSlugifierAdapter
+        arguments: []
+
+    xi_filelib.slugigier_pretransliterator:
+        class: Xi\Filelib\Tool\Slugifier\Adapter\PreTransliterator
+        arguments: ["@xi_filelib.transliterator", "@xi_filelib.slugigier_adapter"]
 
     xi_filelib.transliterator:
         class: Xi\Transliterator\IntlTransliterator

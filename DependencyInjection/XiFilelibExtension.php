@@ -88,6 +88,10 @@ class XiFilelibExtension extends Extension
         $twig->addArgument($config['twig']['not_found_url']);
 
         if ($config['publisher']['beautifurls'] == false) {
+            $container->removeDefinition('xi_filelib.slugifier');
+            $container->removeDefinition('xi_filelib.slugifier_adapter');
+            $container->removeDefinition('xi_filelib.slugigier_pretransliterator');
+            $container->removeDefinition('xi_filelib.transliterator');
             $linker = $container->getDefinition('xi_filelib.publisher.linker');
             $linker->setClass('Xi\Filelib\Publisher\Linker\SequentialLinker');
             $linker->setArguments(array());

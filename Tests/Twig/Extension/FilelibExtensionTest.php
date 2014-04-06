@@ -36,7 +36,7 @@ class FilelibExtensionTest extends PHPUnit_Framework_TestCase
                 ->method('getFileRepository')
                 ->will($this->returnValue($this->fileOperator));
 
-        $this->file = $this->getMock('Xi\Filelib\File\File');
+        $this->file = $this->getMockBuilder('Xi\Filelib\File\File')->disableOriginalConstructor()->getMock();
 
         $this->filelibExtension = new FilelibExtension(
             $this->getMockBuilder('Xi\Filelib\Publisher\Publisher')->disableOriginalConstructor()->getMock(),
