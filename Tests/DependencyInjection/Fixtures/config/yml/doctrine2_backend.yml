@@ -1,10 +1,5 @@
 xi_filelib:
     backend:
-        platform:
-            doctrine_orm:
-                entity_manager: doctrine.orm.default_entity_manager
-                folderEntity: Foo\Folder
-                fileEntity: Foo\File
     tempDir: %kernel.root_dir%/data/temp
     storage_filesystem:
         directoryPermission: '775'

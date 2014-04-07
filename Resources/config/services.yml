@@ -1,7 +1,7 @@
 services:
     xi_filelib:
         class: Xi\Filelib\FileLibrary
-        arguments: [ "@xi_filelib.storage", "@xi_filelib.platform", "@event_dispatcher" ]
+        arguments: [ "@xi_filelib.storage", "@xi_filelib.backend.adapter", "@event_dispatcher" ]
 
     xi_filelib.storage:
         class: Xi\Filelib\Storage\FilesystemStorage
@@ -11,8 +11,8 @@ services:
         class: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\TimeDirectoryIdCalculator
         arguments: [ 'Y/m/d' ]
 
-    xi_filelib.platform:
-        class: Xi\Filelib\Backend\Platform\DoctrineOrmPlatform
+    xi_filelib.backend.adapter:
+        class: Xi\Filelib\Backend\Adapter\DoctrineOrmBackendAdapter
         arguments: [ "@doctrine.orm.default_entity_manager" ]
 
     xi_filelib.publisher:
