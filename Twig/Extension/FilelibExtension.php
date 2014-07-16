@@ -19,6 +19,7 @@ use InvalidArgumentException;
 use Xi\Filelib\Storage\FileIOException;
 use Xi\Filelib\Attacher;
 use Twig_SimpleFunction;
+use Xi\Filelib\FilelibException;
 
 class FilelibExtension extends \Twig_Extension implements Attacher
 {
@@ -97,8 +98,9 @@ class FilelibExtension extends \Twig_Extension implements Attacher
 
     public function getFile($file, $version = 'original', $options = array())
     {
+
         $file = $this->assertFileIsValid($file);
-        if ($this->publisher->isPublished($file)) {
+        if ($this->publisher->isVersionPublished($file, $version)) {
             return $this->getFileUrl($file, $version, $options);
         }
         return $this->getRenderUrl($file, $version, $options);
@@ -110,17 +112,15 @@ class FilelibExtension extends \Twig_Extension implements Attacher
 
         $options = $this->mergeOptionsWithDefaultOptions($options);
 
-        if ($file->hasVersion($version) || $file->getResource()->hasVersion($version)) {
-            try {
-                return $this->publisher->getUrlVersion($file, $version, $options);
-            } catch (FileIOException $e) {
-                return $this->notFoundUrl;
-            }
-        } else {
+        if (!$this->publisher->isVersionPublished($file, $version)) {
             return $this->notFoundUrl;
         }
 
-
+        try {
+            return $this->publisher->getUrl($file, $version, $options);
+        } catch (FilelibException $e) {
+            return $this->notFoundUrl;
+        }
     }
 
     public function getRenderUrl($file, $version = 'original', $options = array())
