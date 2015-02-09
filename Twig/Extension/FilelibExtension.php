@@ -83,6 +83,7 @@ class FilelibExtension extends \Twig_Extension implements Attacher
             'filelib_url' => new Twig_SimpleFunction('filelib_url', array($this, 'getFileUrl'), array('is_safe' => array('html'))),
             'filelib_render' => new Twig_SimpleFunction('filelib_render', array($this, 'getRenderUrl'), array('is_safe' => array('html'))),
             'filelib_is_file_completed' => new Twig_SimpleFunction('filelib_is_file_completed', array($this, 'isFileCompleted')),
+
         );
     }
 
@@ -106,14 +107,16 @@ class FilelibExtension extends \Twig_Extension implements Attacher
         return $this->getRenderUrl($file, $version, $options);
     }
 
-    public function getFileUrl($file, $version = 'original', $options = array())
+    public function getFileUrl($file, $version = 'original', $options = array(), $askPublisher = true)
     {
         $file = $this->assertFileIsValid($file);
 
         $options = $this->mergeOptionsWithDefaultOptions($options);
 
-        if (!$this->publisher->isVersionPublished($file, $version)) {
-            return $this->notFoundUrl;
+        if ($askPublisher) {
+            if (!$this->publisher->isVersionPublished($file, $version)) {
+                return $this->notFoundUrl;
+            }
         }
 
         try {
