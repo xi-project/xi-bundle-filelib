@@ -15,9 +15,7 @@ xi_filelib:
         root: %kernel.root_dir%/filelib/files
         file_permission: "664"
         directory_permission: "775"
-        path_calculator:
-            class: Xi\Filelib\Storage\Filesystem\PathCalculator\LegacyPathCalculator
-            arguments: []
+        path_calculator_service: ~
 
     publisher:
         automatic_publisher: true
