@@ -12,7 +12,7 @@ services:
         arguments: [ "@xi_filelib.storage.directory_id_calculator" ]
 
     xi_filelib.storage.directory_id_calculator:
-        class: Xi\Filelib\Storage\Adapter\Filesystem\PathCalculator\TimeDirectoryIdCalculator
+        class: Xi\Filelib\Storage\Adapter\Filesystem\DirectoryIdCalculator\TimeDirectoryIdCalculator
         arguments: [ 'Y/m/d' ]
 
     xi_filelib.backend.adapter:
