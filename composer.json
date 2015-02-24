@@ -21,7 +21,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
-        "xi/filelib": "0.12.*"
+        "xi/filelib": "0.13.*"
     },
 
     "require-dev": {
@@ -30,7 +30,8 @@
         "symfony/config": "~2.1",
         "symfony/yaml": "~2.1",
         "symfony/routing": "~2.1",
-        "twig/twig": "~1.15"
+        "twig/twig": "~1.15",
+        "phpunit/phpunit": "~4.0"
     },
 
     "autoload": {

@@ -5,10 +5,14 @@ services:
 
     xi_filelib.storage:
         class: Xi\Filelib\Storage\Adapter\FilesystemStorageAdapter
-        arguments: [ "%kernel.root_dir%/data/files", "@xi_filelib.storage.directory_id_calculator", "600", "700" ]
+        arguments: [ "%kernel.root_dir%/data/files", "@xi_filelib.storage.path_calculator", "600", "700" ]
+
+    xi_filelib.storage.path_calculator:
+        class: Xi\Filelib\Storage\Adapter\Filesystem\PathCalculator\LegacyPathCalculator
+        arguments: [ "@xi_filelib.storage.directory_id_calculator" ]
 
     xi_filelib.storage.directory_id_calculator:
-        class: Xi\Filelib\Storage\Filesystem\Adapter\DirectoryIdCalculator\TimeDirectoryIdCalculator
+        class: Xi\Filelib\Storage\Adapter\Filesystem\PathCalculator\TimeDirectoryIdCalculator
         arguments: [ 'Y/m/d' ]
 
     xi_filelib.backend.adapter:

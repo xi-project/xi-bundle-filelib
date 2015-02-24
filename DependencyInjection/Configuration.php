@@ -49,7 +49,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('root')
                         ->defaultValue('%kernel.root_dir%/data/files')
                     ->end()
-                    ->variableNode('directory_id_calculator')
+                    ->variableNode('path_calculator')
                         ->defaultNull()
                     ->end()
             ->end()

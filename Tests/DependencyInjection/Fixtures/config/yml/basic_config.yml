@@ -15,9 +15,9 @@ xi_filelib:
         root: %kernel.root_dir%/filelib/files
         file_permission: "664"
         directory_permission: "775"
-        directory_id_calculator:
-            class: Xi\Filelib\Storage\Filesystem\DirectoryIdCalculator\LeveledDirectoryIdCalculator
-            arguments: [ 3, 500 ]
+        path_calculator:
+            class: Xi\Filelib\Storage\Filesystem\PathCalculator\LegacyPathCalculator
+            arguments: []
 
     publisher:
         automatic_publisher: true

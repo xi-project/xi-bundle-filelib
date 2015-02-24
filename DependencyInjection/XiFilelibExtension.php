@@ -50,12 +50,13 @@ class XiFilelibExtension extends Extension
         $storage->replaceArgument(3, $config['storage']['directory_permission']);
 
 
-        if ($config['storage']['directory_id_calculator']) {
+        if ($config['storage']['path_calculator']) {
+            $calc = $container->getDefinition('xi_filelib.storage.path_calculator');
+            $calc->setClass($config['storage']['path_calculator']['class']);
 
-            $calc = $container->getDefinition('xi_filelib.storage.directory_id_calculator');
-
-            $calc->setClass($config['storage']['directory_id_calculator']['class']);
-            $calc->setArguments($config['storage']['directory_id_calculator']['arguments']);
+            if (isset($config['storage']['path_calculator']['arguments'])) {
+                $calc->setArguments($config['storage']['path_calculator']['arguments']);
+            }
         }
 
         // profiles
