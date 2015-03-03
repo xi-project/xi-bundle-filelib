@@ -99,7 +99,6 @@ class FilelibExtension extends \Twig_Extension implements Attacher
 
     public function getFile($file, $version = 'original', $options = array())
     {
-
         $file = $this->assertFileIsValid($file);
         if ($this->publisher->isVersionPublished($file, $version)) {
             return $this->getFileUrl($file, $version, $options);
@@ -109,7 +108,11 @@ class FilelibExtension extends \Twig_Extension implements Attacher
 
     public function getFileUrl($file, $version = 'original', $options = array(), $askPublisher = true)
     {
-        $file = $this->assertFileIsValid($file);
+        try {
+            $file = $this->assertFileIsValid($file);
+        } catch (\InvalidArgumentException $e) {
+            return $this->notFoundUrl;
+        }
 
         $options = $this->mergeOptionsWithDefaultOptions($options);
 
