@@ -5,6 +5,12 @@
     "keywords": ["file management", "file", "image", "video"],
     "homepage": "http://github.com/xi-project/xi-bundle-filelib",
     "license": "BSD",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/W3GroupFinland/xi-filelib.git"
+        }
+    ],
     "authors": [
         {
             "name": "Mikko Forsström",
@@ -21,7 +27,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.3.3",
-        "xi/filelib": "0.10.*"
+        "xi/filelib": "dev-fixes"
     },
 
     "require-dev": {
